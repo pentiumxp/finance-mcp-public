@@ -914,7 +914,7 @@ html.finance-input-focus body.finance-embed .finance-shell {
   display: grid;
   grid-template-columns: 42px minmax(0, 1fr) auto;
   gap: 10px;
-  align-items: center;
+  align-items: start;
   padding: 12px 0;
   border-bottom: 1px solid var(--line);
 }
@@ -1004,6 +1004,22 @@ html.finance-input-focus body.finance-embed .finance-shell {
   font-weight: 760;
 }
 
+.finance-row-body {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.finance-row-detail {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .finance-row-attachment {
   width: 16px;
   height: 16px;
@@ -1033,12 +1049,17 @@ html.finance-input-focus body.finance-embed .finance-shell {
 }
 
 .finance-row-meta {
-  margin-top: 5px;
+  min-width: 0;
+  overflow: hidden;
   color: var(--muted);
   font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .finance-row-amount {
+  align-self: start;
   font-size: 15px;
   font-weight: 780;
   font-variant-numeric: tabular-nums;

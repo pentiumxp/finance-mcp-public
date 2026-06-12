@@ -11,7 +11,7 @@ const {
   sanitizeRoute,
 } = require("../adapters/finance-hermes-embedded-plugin-service");
 
-const EMBEDDED_APP_VERSION = "finance-replica-20260612m";
+const EMBEDDED_APP_VERSION = "finance-replica-20260612n";
 
 test("Hermes embedded manifest exposes stable plugin contract", () => {
   const service = createHermesEmbeddedPluginService({ defaultOrigin: "http://127.0.0.1:8791", embeddedAppVersion: EMBEDDED_APP_VERSION });

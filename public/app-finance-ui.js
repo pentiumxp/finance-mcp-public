@@ -196,7 +196,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v137",
+      serviceWorker: "finance-mcp-pwa-v138",
     };
   }
 
@@ -1560,6 +1560,8 @@
 
   function transactionRow(row) {
     const title = row.categoryName || typeLabel(row.type);
+    const detailLine = [row.note, row.merchantName].filter(Boolean).join(" · ");
+    const dateLine = [formatTransactionRowDateTime(row.occurredAt), row.accountName, row.memberName].filter(Boolean).join(" · ");
     const hasImage = Number(row.imageAttachmentCount || 0) > 0 || Boolean(row.firstImageUrl);
     const attachmentCount = Number(row.attachmentCount || 0);
     const attachmentBadge = hasImage
@@ -1572,9 +1574,10 @@
         <div class="finance-swipe-actions" aria-hidden="true" data-swipe-actions></div>
         <button type="button" class="finance-row finance-row-button" data-transaction-id="${escapeHtml(row.id)}">
           ${iconSpan(title, "finance-row-icon")}
-          <div>
+          <div class="finance-row-body">
             <div class="finance-row-title">${escapeHtml(title)}</div>
-            <div class="finance-row-meta">${escapeHtml([row.note, formatTransactionRowDateTime(row.occurredAt), row.accountName, row.memberName, row.merchantName].filter(Boolean).join(" · "))}</div>
+            ${detailLine ? `<div class="finance-row-detail">${escapeHtml(detailLine)}</div>` : ""}
+            <div class="finance-row-meta">${escapeHtml(dateLine)}</div>
           </div>
           <div class="finance-row-amount ${escapeHtml(row.type)}">${attachmentBadge}${escapeHtml(amountText(row, true))}</div>
         </button>

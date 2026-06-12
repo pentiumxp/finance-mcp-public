@@ -205,6 +205,11 @@ test("finance CSS follows Wacai replica baseline without disallowed patterns", (
   assert.match(css, /\.finance-bottom-nav\s*{[\s\S]*border-radius:\s*24px/);
   assert.match(css, /\.finance-bottom-nav\s*{[\s\S]*grid-template-columns:\s*repeat\(5,\s*minmax\(0,\s*1fr\)\)/);
   assert.match(css, /body\.finance-owner-assets-enabled \.finance-bottom-nav\s*{[\s\S]*grid-template-columns:\s*repeat\(6,\s*minmax\(0,\s*1fr\)\)/);
+  assert.match(css, /\.finance-row\s*{[\s\S]*align-items:\s*start/);
+  assert.match(css, /\.finance-row-body\s*{[\s\S]*display:\s*grid[\s\S]*gap:\s*4px/);
+  assert.match(css, /\.finance-row-detail\s*{[\s\S]*white-space:\s*nowrap/);
+  assert.match(css, /\.finance-row-meta\s*{[\s\S]*white-space:\s*nowrap/);
+  assert.match(css, /\.finance-row-amount\s*{[\s\S]*align-self:\s*start/);
   assert.match(css, /\.finance-asset-year-list\s*{[\s\S]*grid-auto-flow:\s*column/);
   assert.match(css, /\.finance-asset-year-list\s*{[\s\S]*overflow-x:\s*auto/);
   assert.match(css, /\.finance-asset-year-list button\.active\s*{[\s\S]*background:\s*#215052/);
@@ -599,8 +604,12 @@ test("report page renders Wacai-like statistics and client auto refresh", () => 
   assert.match(js, /formatWacaiTime/);
   assert.match(js, /function formatTransactionRowDateTime\(value\)/);
   assert.match(js, /\$\{date\.getFullYear\(\)\}\/\$\{pad2\(date\.getMonth\(\) \+ 1\)\}\/\$\{pad2\(date\.getDate\(\)\)\} \$\{formatWacaiTime\(value\)\}/);
-  assert.match(js, /\[row\.note, formatTransactionRowDateTime\(row\.occurredAt\), row\.accountName, row\.memberName, row\.merchantName\]/);
+  assert.match(js, /const detailLine = \[row\.note, row\.merchantName\]\.filter\(Boolean\)\.join\(" · "\)/);
+  assert.match(js, /const dateLine = \[formatTransactionRowDateTime\(row\.occurredAt\), row\.accountName, row\.memberName\]\.filter\(Boolean\)\.join\(" · "\)/);
+  assert.match(js, /class="finance-row-body"/);
+  assert.match(js, /class="finance-row-detail"/);
   assert.doesNotMatch(js, /\[row\.note, formatWacaiTime\(row\.occurredAt\), row\.accountName/);
+  assert.doesNotMatch(js, /\[row\.note, formatTransactionRowDateTime\(row\.occurredAt\), row\.accountName/);
   assert.match(js, /currencyLabel/);
   assert.match(js, /function sortedAccounts/);
   assert.match(js, /function accountOptions/);
@@ -751,9 +760,9 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260612m/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260612m/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v137/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260612n/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260612n/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v138/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -793,7 +802,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v137"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v138"/);
   assert.match(captureHarness, /camera button is not pinned near the right edge/);
   assert.match(captureHarness, /meta control height mismatch/);
 });
