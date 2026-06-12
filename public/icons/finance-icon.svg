@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Finance MCP">
+  <rect width="512" height="512" rx="112" fill="#f7f8f7"/>
+  <rect x="96" y="104" width="320" height="304" rx="36" fill="#17201c"/>
+  <rect x="126" y="136" width="260" height="58" rx="18" fill="#f7f8f7"/>
+  <circle cx="154" cy="246" r="24" fill="#d8a75b"/>
+  <circle cx="256" cy="246" r="24" fill="#d8a75b"/>
+  <circle cx="358" cy="246" r="24" fill="#d8a75b"/>
+  <circle cx="154" cy="330" r="24" fill="#e7e2d7"/>
+  <circle cx="256" cy="330" r="24" fill="#e7e2d7"/>
+  <path d="M334 330h48" stroke="#e7e2d7" stroke-width="28" stroke-linecap="round"/>
+</svg>

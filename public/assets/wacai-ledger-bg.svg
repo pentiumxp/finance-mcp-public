@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 560" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#175fa8"/>
+      <stop offset="0.52" stop-color="#5d78b8"/>
+      <stop offset="1" stop-color="#97a9cc"/>
+    </linearGradient>
+  </defs>
+  <rect width="860" height="560" fill="url(#base)"/>
+  <g filter="url(#blur)" opacity="0.94">
+    <path d="M40 42c92-62 192-62 252 6 58 65 20 148-48 190-54 33-58 93-112 116-64 28-136-14-158-84-25-82-5-178 66-228Z" fill="#f8cbbb" opacity="0.52"/>
+    <path d="M328 6c82 25 151 93 146 178-4 66-65 89-82 143-20 64 32 112-20 156-52 45-145 4-179-62-46-91-9-220 64-291 30-29 42-86 71-124Z" fill="#dfeaff" opacity="0.48"/>
+    <path d="M512 124c61-38 145-20 191 41 49 65 51 154 2 206-52 56-142 36-192-28-56-72-71-173-1-219Z" fill="#ef876f" opacity="0.40"/>
+    <path d="M658 18c89 4 166 76 176 165 8 79-51 140-129 135-78-6-148-84-151-169-3-75 37-124 104-131Z" fill="#ffffff" opacity="0.34"/>
+    <circle cx="514" cy="206" r="34" fill="#e24a43" opacity="0.48"/>
+    <circle cx="590" cy="274" r="24" fill="#f6e0cc" opacity="0.42"/>
+  </g>
+  <rect width="860" height="560" fill="#1f5f9f" opacity="0.03"/>
+</svg>

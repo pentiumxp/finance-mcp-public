@@ -1,0 +1,28 @@
+name: hermes-mobile-finance
+version: 0.1.0
+description: "Hermes Mobile Finance MCP bridge for the scoped finance toolset."
+author: Hermes Mobile
+kind: standalone
+provides_tools:
+  - finance
+requires:
+  env:
+    - FINANCE_MCP_WORKSPACE
+optional_env:
+  - FINANCE_MCP_URL
+  - FINANCE_HERMES_CALLBACK_URL
+  - HERMES_MOBILE_CALLBACK_URL
+  - FINANCE_MCP_NO_WORKSPACE_OVERRIDE
+callback_registration:
+  endpoint: /api/finance/mcp/register
+  allowed_callback_url_policy: https_or_loopback_http
+identity:
+  provider: hermes_mobile
+  source: workspace_local_hermes_finance_config
+  config: .hermes-finance/config.json
+  key_file: .hermes-finance/access-key.txt
+  storage: sha256_scoped_member_binding
+  raw_key_storage: forbidden
+workspace_isolation:
+  runtime_override: forbidden
+  owner_fallback: forbidden

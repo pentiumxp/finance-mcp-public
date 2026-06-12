@@ -1,0 +1,32 @@
+{
+  "name": "finance-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first finance ledger with a scoped MCP toolset for Hermes Mobile.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node tests/architecture-boundary.test.js && node tests/privacy-scan.test.js",
+    "migrate": "node scripts/finance-migrate.js",
+    "import:wacai": "node scripts/import-wacai-xlsx.js",
+    "repair:wacai-members": "node scripts/repair-wacai-member-tags.js",
+    "privacy:scan": "node tests/privacy-scan.test.js",
+    "smoke": "node scripts/finance-smoke.js",
+    "start": "node server.js",
+    "start:windows": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/windows-start-finance-service.ps1",
+    "deploy:mac": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-mac-finance.ps1",
+    "autostart:windows:install": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/windows-install-autostart.ps1",
+    "autostart:windows:uninstall": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/windows-uninstall-autostart.ps1",
+    "start:mcp": "node mcp/finance-mcp-server.js",
+    "start:mcp:stdio": "node scripts/finance-mcp-stdio.js",
+    "start:mcp:stdio:python": "python scripts/finance_mcp_stdio.py",
+    "platform:check": "node scripts/finance-platform-contract-smoke.js --require-tool finance.reference_object_types --require-tool finance.reference_get --require-tool finance.reference_summarize",
+    "restart:nas:hot": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/nas-finance-hot-restart.ps1",
+    "test": "node --test tests/*.test.js",
+    "verify:pwa:android": "node scripts/verify-android-pwa.js",
+    "verify:pwa:desktop": "node scripts/capture-desktop-pwa.js",
+    "verify:entry-android": "node scripts/capture-entry-comparison-android.js"
+  }
+}

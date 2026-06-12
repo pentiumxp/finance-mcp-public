@@ -1,0 +1,53 @@
+"use strict";
+
+function normalizeArgs(args = {}) {
+  return {
+    ...args,
+    ledgerId: args.ledgerId || args.ledger_id,
+    occurredAt: args.occurredAt || args.occurred_at,
+    startDate: args.startDate || args.start_date,
+    endDate: args.endDate || args.end_date,
+    accountHint: args.accountHint || args.account_hint,
+    targetAccountHint: args.targetAccountHint || args.target_account_hint,
+    categoryHint: args.categoryHint || args.category_hint,
+    memberHint: args.memberHint || args.member_hint,
+    transactionId: args.transactionId || args.transaction_id,
+    fileName: args.fileName || args.file_name,
+    mimeType: args.mimeType || args.mime_type,
+    dataBase64: args.dataBase64 || args.data_base64,
+    dataUrl: args.dataUrl || args.data_url,
+    filePath: args.filePath || args.file_path,
+    uploadPath: args.uploadPath || args.upload_path,
+    idempotencyKey: args.idempotencyKey || args.idempotency_key,
+    rawText: args.rawText || args.raw_text,
+    includeVoided: args.includeVoided || args.include_voided,
+    memberId: args.memberId || args.member_id,
+    memberIds: args.memberIds || args.member_ids,
+    financeUserId: args.financeUserId || args.finance_user_id,
+    financeUserKey: args.financeUserKey || args.finance_user_key,
+    templateId: args.templateId || args.template_id,
+    requestId: args.requestId || args.request_id,
+    invitationId: args.invitationId || args.invitation_id,
+    categoryId: args.categoryId || args.category_id,
+    categoryParentId: args.categoryParentId || args.category_parent_id,
+    accountId: args.accountId || args.account_id,
+    merchantId: args.merchantId || args.merchant_id,
+    tagId: args.tagId || args.tag_id,
+    ruleId: args.ruleId || args.rule_id,
+    intervalCount: args.intervalCount || args.interval_count,
+    dayOfMonth: args.dayOfMonth || args.day_of_month,
+    monthOfYear: args.monthOfYear || args.month_of_year,
+    startAt: args.startAt || args.start_at,
+    endAt: args.endAt || args.end_at,
+    timeOfDay: args.timeOfDay || args.time_of_day,
+    throughAt: args.throughAt || args.through_at,
+    maxOccurrences: args.maxOccurrences || args.max_occurrences,
+    voidGenerated: args.voidGenerated || args.void_generated,
+    objectType: args.objectType || args.object_type,
+    objectId: args.objectId || args.object_id,
+  };
+}
+
+module.exports = {
+  normalizeArgs,
+};
