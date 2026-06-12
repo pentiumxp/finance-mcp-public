@@ -3110,3 +3110,68 @@ The previous full handoff was archived and should be opened only when old proven
   - docs-only handoff commits were pushed to both `origin/main` and
     `public/main`;
   - status checks showed `## main...origin/main` after branch alignment.
+
+## 2026-06-12 Transaction Row Wacai Hierarchy Fix
+
+- Status: committed, pushed to origin/public `main`, and deployed to Mac
+  production.
+- Commit: `0b727afb860b` (`fix: match wacai transaction row layout`).
+- Correction from prior attempt:
+  - The previous `acdbbbb` change replaced row time with full date-time but
+    kept note, date, account, member, and merchant collapsed in one
+    `.finance-row-meta` line. That did not match Wacai and could wrap the
+    metadata unclearly.
+  - This fix splits transaction rows into `.finance-row-body`,
+    optional `.finance-row-detail`, and `.finance-row-meta`.
+- User-visible behavior:
+  - Transaction rows now follow Wacai-style hierarchy: icon, title, and amount
+    are aligned on the first line; note/merchant appear on their own secondary
+    line when present; `YYYY/MM/DD HH:mm · account · member` appears on its own
+    metadata line.
+  - Rows without note/merchant show date-time as the second text line.
+- Static versions:
+  - frontend `finance-replica-20260612n`;
+  - service worker `finance-mcp-pwa-v138`.
+- Changed files:
+  - `public/app-finance-ui.js`;
+  - `public/styles.css`;
+  - `public/finance.html`;
+  - `public/service-worker.js`;
+  - `adapters/finance-hermes-embedded-plugin-service.js`;
+  - `scripts/deploy-mac-finance.ps1`;
+  - `tests/app-finance-ui.test.js`;
+  - `tests/finance-hermes-embedded-plugin-service.test.js`;
+  - `docs/TEST_MATRIX.md`.
+- Validation passed:
+  - `node --check public/app-finance-ui.js`;
+  - `node --check tests/app-finance-ui.test.js`;
+  - `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js`;
+  - `npm run check`;
+  - `npm test`;
+  - `git diff --check`;
+  - Home AI deploy script checks:
+    `node --check scripts/deploy-macos-production.js`,
+    `node tests/macos-production-deploy-script.test.js`,
+    `node tests/production-status-smoke-harness.test.js`.
+- AI Ops:
+  - Intake classified the task as H3.
+  - Test evidence ledger record:
+    `evidence-c2485cf4-71fb-4116-83e5-7d2503f4fca8`.
+  - Deploy evidence ledger record:
+    `evidence-cab2d32c-83fc-4ba5-a809-d563c39cfa00`.
+- Production deploy:
+  - Command:
+    `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-transaction-row-wacai-layout-20260612 --execute --json`.
+  - Backup:
+    `/Users/hermes-host/HermesMobile/backups/deploy/20260612T152618Z-plugin-finance-finance-transaction-row-wacai-layout-20260612`.
+  - Restarted launchd label: `com.hermesmobile.plugin.finance`.
+  - Production smoke passed:
+    `/finance.html` references `finance-replica-20260612n`,
+    `/app-finance-ui.js` contains `class="finance-row-body"`,
+    `class="finance-row-detail"`, and the independent `dateLine`,
+    `/styles.css` contains `.finance-row-body` and `.finance-row-detail`,
+    `/service-worker.js` contains `finance-mcp-pwa-v138`, plugin manifest entry
+    contains `finance-replica-20260612n`, and `/api/finance/overview` returned
+    HTTP `200`.
+  - Deploy validation returned `codexIssueCount: 0`; profile audit retained
+    non-Codex issues outside this Finance deploy.
