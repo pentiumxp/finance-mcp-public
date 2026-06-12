@@ -196,7 +196,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v136",
+      serviceWorker: "finance-mcp-pwa-v137",
     };
   }
 
@@ -1292,6 +1292,12 @@
     return `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
   }
 
+  function formatTransactionRowDateTime(value) {
+    const date = parseDate(value);
+    if (!date) return "";
+    return `${date.getFullYear()}/${pad2(date.getMonth() + 1)}/${pad2(date.getDate())} ${formatWacaiTime(value)}`;
+  }
+
   function formatFullDate(value) {
     const date = parseDate(value);
     if (!date) return "未定日期";
@@ -1568,7 +1574,7 @@
           ${iconSpan(title, "finance-row-icon")}
           <div>
             <div class="finance-row-title">${escapeHtml(title)}</div>
-            <div class="finance-row-meta">${escapeHtml([row.note, formatWacaiTime(row.occurredAt), row.accountName, row.memberName, row.merchantName].filter(Boolean).join(" · "))}</div>
+            <div class="finance-row-meta">${escapeHtml([row.note, formatTransactionRowDateTime(row.occurredAt), row.accountName, row.memberName, row.merchantName].filter(Boolean).join(" · "))}</div>
           </div>
           <div class="finance-row-amount ${escapeHtml(row.type)}">${attachmentBadge}${escapeHtml(amountText(row, true))}</div>
         </button>

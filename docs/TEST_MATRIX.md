@@ -537,6 +537,9 @@ Coverage requirements:
 
 - Home/all transaction lists load 30 rows initially and append the next 30 rows
   when scrolling reaches the bottom.
+- Transaction row metadata in home/all/report detail lists follows Wacai-style
+  date-time text (`YYYY/MM/DD HH:mm`) before account/member metadata. It must
+  not show only the clock time.
 - `finance.list_transactions` and `/api/finance/transactions` expose bounded
   `limit` plus `offset` pagination; report totals remain independent from this
   paginated list projection.

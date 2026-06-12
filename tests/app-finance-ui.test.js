@@ -597,6 +597,10 @@ test("report page renders Wacai-like statistics and client auto refresh", () => 
   assert.match(js, /service-worker\.js/);
   assert.match(js, /formatWacaiDate/);
   assert.match(js, /formatWacaiTime/);
+  assert.match(js, /function formatTransactionRowDateTime\(value\)/);
+  assert.match(js, /\$\{date\.getFullYear\(\)\}\/\$\{pad2\(date\.getMonth\(\) \+ 1\)\}\/\$\{pad2\(date\.getDate\(\)\)\} \$\{formatWacaiTime\(value\)\}/);
+  assert.match(js, /\[row\.note, formatTransactionRowDateTime\(row\.occurredAt\), row\.accountName, row\.memberName, row\.merchantName\]/);
+  assert.doesNotMatch(js, /\[row\.note, formatWacaiTime\(row\.occurredAt\), row\.accountName/);
   assert.match(js, /currencyLabel/);
   assert.match(js, /function sortedAccounts/);
   assert.match(js, /function accountOptions/);
@@ -747,9 +751,9 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260612l/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260612l/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v136/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260612m/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260612m/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v137/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -789,7 +793,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v136"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v137"/);
   assert.match(captureHarness, /camera button is not pinned near the right edge/);
   assert.match(captureHarness, /meta control height mismatch/);
 });
