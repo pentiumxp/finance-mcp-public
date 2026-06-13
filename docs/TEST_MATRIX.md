@@ -332,6 +332,10 @@ node tests\app-finance-ui.test.js
 - top-left back。
 - edge swipe back。
 - entry amount custom keypad has a decimal key, limits each numeric segment to two fractional digits, evaluates `+ - * /` expressions through the `=` key without dynamic code execution, keeps left/right safe touch gutters so the `1/4/7` column is not flush with the screen edge, and still keeps the amount field `inputmode="none"`/read-only so the native keyboard is not summoned.
+- entry amount custom keypad must handle both the form `click` delegation path
+  and direct keypad `pointerup`/`touchend` paths with a short duplicate guard, so
+  embedded or shared-user WebViews still update the amount when button touch
+  animation is visible but delegated click delivery is unreliable.
 - entry keypad `再记` is a mode toggle only; tests must reject a regression
   where that button directly calls form submit or creates a transaction without
   an explicit `保存` action.

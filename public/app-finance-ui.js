@@ -77,6 +77,9 @@
     swipeHorizontalIntent: false,
     swipeAxis: "idle",
     swipeMaxLeft: 0,
+    lastKeypadHandledAt: 0,
+    lastKeypadHandledKey: "",
+    lastKeypadHandledType: "",
     divideNext: false,
     stayOnEntryAfterSubmit: false,
     uiProbeTimer: 0,
@@ -196,7 +199,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v139",
+      serviceWorker: "finance-mcp-pwa-v140",
     };
   }
 
@@ -3583,8 +3586,18 @@
   }
 
   function handleKeypad(event) {
-    const key = event.target.closest("[data-keypad-value],[data-keypad-action]");
+    const target = event.target?.closest ? event.target : event.target?.parentElement;
+    const key = target?.closest?.("[data-keypad-value],[data-keypad-action]");
     if (!key) return;
+    const handledKey = key.dataset.keypadAction || key.dataset.keypadValue || "";
+    const now = Date.now();
+    const eventType = event.type || "";
+    const duplicateWindowMs = eventType === "click" ? 500 : 80;
+    if (state.lastKeypadHandledKey === handledKey && now - state.lastKeypadHandledAt < duplicateWindowMs) return;
+    state.lastKeypadHandledKey = handledKey;
+    state.lastKeypadHandledAt = now;
+    state.lastKeypadHandledType = eventType;
+    event.preventDefault?.();
     const action = key.dataset.keypadAction;
     if (action === "backspace") {
       const input = $("[data-entry-amount]");
@@ -4260,6 +4273,8 @@
     $("[data-entry-amount]")?.addEventListener("focus", preventAmountNativeKeyboard);
     $("[data-entry-amount]")?.addEventListener("input", (event) => setEntryAmount(event.target.value));
     $("[data-entry-form]")?.addEventListener("click", handleKeypad);
+    $(".wacai-keypad")?.addEventListener("pointerup", handleKeypad);
+    $(".wacai-keypad")?.addEventListener("touchend", handleKeypad, { passive: false });
     $("[data-entry-form]")?.addEventListener("input", (event) => {
       if (event.target.matches("[data-entry-amount]")) return;
       scheduleEntryDraftSave();

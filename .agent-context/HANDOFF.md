@@ -209,6 +209,43 @@ The previous full handoff was archived and should be opened only when old proven
   - Deploy validation returned `codexIssueCount: 0`; profile audit retained
     non-Codex issues outside this Finance deploy.
 
+## 2026-06-13 Shared-User Entry Keypad Direct Binding Fix
+
+- Status: local fix validated; commit/deploy pending in this turn.
+- Problem:
+  - A shared-user bookkeeping session could show keypad button touch animation
+    while the amount text stayed unchanged.
+  - The previous keypad handler depended on form-level `click` delegation only,
+    which is brittle in embedded/shared-user WebView delivery paths.
+- User-visible behavior:
+  - The amount keypad now keeps the existing form `click` delegation and also
+    handles direct `.wacai-keypad` `pointerup` / `touchend` events.
+  - A short duplicate guard suppresses duplicate synthetic events without
+    blocking normal rapid repeated digit input.
+- Static versions:
+  - frontend `finance-replica-20260613b`;
+  - service worker `finance-mcp-pwa-v140`.
+- Changed files:
+  - `public/app-finance-ui.js`;
+  - `public/finance.html`;
+  - `public/service-worker.js`;
+  - `adapters/finance-hermes-embedded-plugin-service.js`;
+  - `scripts/deploy-mac-finance.ps1`;
+  - `tests/app-finance-ui.test.js`;
+  - `tests/finance-hermes-embedded-plugin-service.test.js`;
+  - `docs/TEST_MATRIX.md`.
+- Validation passed before commit:
+  - `node --check public/app-finance-ui.js`;
+  - `node --check tests/app-finance-ui.test.js`;
+  - `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js`;
+  - `npm run check`;
+  - `npm test`;
+  - `git diff --check`.
+- AI Ops:
+  - Intake classified the task as H3.
+  - Test evidence ledger record:
+    `evidence-15568d68-a92d-498e-8a7e-663ad77d69e9`.
+
 ## 2026-06-12 Transaction Row Wacai Date-Time Fix
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

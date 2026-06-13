@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "finance-mcp-pwa-v139";
+const CACHE_NAME = "finance-mcp-pwa-v140";
 const STATIC_ASSETS = [
   "/",
   "/finance.html",
