@@ -196,7 +196,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v138",
+      serviceWorker: "finance-mcp-pwa-v139",
     };
   }
 
@@ -2235,9 +2235,10 @@
         ${positions.map((row) => `
           <div class="finance-row static finance-asset-row finance-stock-row">
             ${iconSpan("股票", "finance-row-icon")}
-            <div>
+            <div class="finance-row-body">
               <div class="finance-row-title">${escapeHtml(row.label || row.ticker || row.position_key)}</div>
-              <div class="finance-row-meta">${escapeHtml(row.ticker || "")} · ${stockQuantityText(row)} · 当前 ${stockPositionPrice(row)}</div>
+              <div class="finance-row-meta">${escapeHtml([row.ticker || "", stockQuantityText(row)].filter(Boolean).join(" · "))}</div>
+              <div class="finance-stock-price"><span>当前价格</span><strong>${escapeHtml(stockPositionPrice(row))}</strong></div>
             </div>
             <div class="finance-row-amount">
               ${formatCurrencyMinor(row.market_value_base_minor, selected.base_currency || "USD", selected.base_scale || 2)}

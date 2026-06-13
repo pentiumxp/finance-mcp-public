@@ -880,6 +880,26 @@ html.finance-input-focus body.finance-embed .finance-shell {
   overflow-wrap: anywhere;
 }
 
+.finance-stock-price {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 720;
+  white-space: nowrap;
+}
+
+.finance-stock-price strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 820;
+  text-overflow: ellipsis;
+}
+
 .finance-stock-row .finance-row-amount span {
   display: block;
   color: var(--muted);

@@ -185,6 +185,8 @@ node tests\privacy-scan.test.js
 - Stock holding tools are partitioned by Finance user. Summary queries and the
   stock UI refresh live prices and FX before calculating current market value;
   natural-language position deltas persist a new live-priced snapshot.
+- Stock holding rows must display each position's current price on its own
+  visible line; ticker/quantity metadata must not truncate or hide the price.
 - Stock UI summary hero text must keep explicit high-contrast foreground colors
   in Light and Dark themes; it must not inherit the page `--ink` color on the
   dark green valuation background.

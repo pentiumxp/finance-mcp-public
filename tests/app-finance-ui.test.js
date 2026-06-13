@@ -58,6 +58,9 @@ test("standalone finance UI keeps mobile navigation and settings", () => {
   assert.match(js, /finance-owner-stocks-enabled/);
   assert.match(js, /function renderOwnerAssets/);
   assert.match(js, /function renderOwnerStocks/);
+  assert.match(js, /class="finance-stock-price"/);
+  assert.match(js, />当前价格<\/span><strong>\$\{escapeHtml\(stockPositionPrice\(row\)\)\}<\/strong>/);
+  assert.doesNotMatch(js, /stockQuantityText\(row\)} · 当前 \$\{stockPositionPrice\(row\)\}/);
   assert.equal(js.includes("owner-stocks/summary?live=1"), true);
   assert.match(html, /class="finance-nav-primary" data-nav-view="entry"/);
   assert.match(html, /data-settings-overlay/);
@@ -217,6 +220,8 @@ test("finance CSS follows Wacai replica baseline without disallowed patterns", (
   assert.match(css, /\.finance-asset-total-tab\s*{[\s\S]*min-height:\s*118px/);
   assert.match(css, /\.finance-asset-metrics\s*{[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/);
   assert.match(css, /\.finance-asset-live-rate\s*{[\s\S]*font-size:\s*12px/);
+  assert.match(css, /\.finance-stock-price\s*{[\s\S]*display:\s*flex/);
+  assert.match(css, /\.finance-stock-price strong\s*{[\s\S]*color:\s*var\(--ink\)/);
   assert.match(css, /\.finance-asset-hero\s*{[\s\S]*color:\s*#ffffff/);
   assert.match(css, /\.finance-asset-hero span,[\s\S]*\.finance-asset-hero small\s*{[\s\S]*color:\s*rgba\(255,\s*255,\s*255,\s*0\.78\)/);
   assert.match(css, /\.finance-asset-hero strong\s*{[\s\S]*color:\s*#ffffff/);
@@ -760,9 +765,9 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260612n/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260612n/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v138/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260613a/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260613a/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v139/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -802,7 +807,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v138"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v139"/);
   assert.match(captureHarness, /camera button is not pinned near the right edge/);
   assert.match(captureHarness, /meta control height mismatch/);
 });
