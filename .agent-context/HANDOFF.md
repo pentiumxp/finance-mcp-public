@@ -152,6 +152,63 @@ The previous full handoff was archived and should be opened only when old proven
   - Deploy validation returned `codexIssueCount: 0`; profile audit retained
     non-Codex issues outside this Finance deploy.
 
+## 2026-06-13 Stock Position Current Price Visibility Fix
+
+- Status: committed, pushed to origin/public `main`, and deployed to Mac
+  production.
+- Commit: `21f89c3b1664` (`fix: show stock position prices`).
+- User-visible behavior:
+  - The 股票 page now shows each holding's current price on its own visible line
+    (`当前价格 <price>`), instead of embedding it in the ticker/quantity metadata
+    line where narrow mobile widths truncated it.
+  - Ticker and quantity remain on the metadata line; market value and
+    allocation remain on the right side of the row.
+- Static versions:
+  - frontend `finance-replica-20260613a`;
+  - service worker `finance-mcp-pwa-v139`.
+- Changed files:
+  - `public/app-finance-ui.js`;
+  - `public/styles.css`;
+  - `public/finance.html`;
+  - `public/service-worker.js`;
+  - `adapters/finance-hermes-embedded-plugin-service.js`;
+  - `scripts/deploy-mac-finance.ps1`;
+  - `tests/app-finance-ui.test.js`;
+  - `tests/finance-hermes-embedded-plugin-service.test.js`;
+  - `docs/TEST_MATRIX.md`.
+- Validation passed:
+  - `node --check public/app-finance-ui.js`;
+  - `node --check tests/app-finance-ui.test.js`;
+  - `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js`;
+  - `npm run check`;
+  - `npm test`;
+  - `git diff --check`;
+  - Home AI deploy script checks:
+    `node --check scripts/deploy-macos-production.js`,
+    `node tests/macos-production-deploy-script.test.js`,
+    `node tests/production-status-smoke-harness.test.js`.
+- AI Ops:
+  - Intake classified the task as H3.
+  - Test evidence ledger record:
+    `evidence-5f29bd9e-08df-42e2-8d21-36d1d2ecdcef`.
+  - Deploy evidence ledger record:
+    `evidence-08664c97-168d-4fe3-a0da-8d2951a9578e`.
+- Production deploy:
+  - Command:
+    `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-stock-position-price-visible-20260613 --execute --json`.
+  - Backup:
+    `/Users/hermes-host/HermesMobile/backups/deploy/20260613T013241Z-plugin-finance-finance-stock-position-price-visible-20260613`.
+  - Restarted launchd label: `com.hermesmobile.plugin.finance`.
+  - Production smoke passed:
+    `/finance.html` references `finance-replica-20260613a`,
+    `/app-finance-ui.js` contains `class="finance-stock-price"` and
+    `当前价格`, `/styles.css` contains `.finance-stock-price`,
+    `/service-worker.js` contains `finance-mcp-pwa-v139`, plugin manifest entry
+    contains `finance-replica-20260613a`, and `/api/finance/overview` returned
+    HTTP `200`.
+  - Deploy validation returned `codexIssueCount: 0`; profile audit retained
+    non-Codex issues outside this Finance deploy.
+
 ## 2026-06-12 Transaction Row Wacai Date-Time Fix
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac
