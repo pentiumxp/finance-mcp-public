@@ -211,7 +211,9 @@ The previous full handoff was archived and should be opened only when old proven
 
 ## 2026-06-13 Shared-User Entry Keypad Direct Binding Fix
 
-- Status: local fix validated; commit/deploy pending in this turn.
+- Status: committed, pushed to origin/public `main`, and deployed to Mac
+  production.
+- Commit: `5638eb554f36` (`fix: bind finance entry keypad directly`).
 - Problem:
   - A shared-user bookkeeping session could show keypad button touch animation
     while the amount text stayed unchanged.
@@ -245,6 +247,23 @@ The previous full handoff was archived and should be opened only when old proven
   - Intake classified the task as H3.
   - Test evidence ledger record:
     `evidence-15568d68-a92d-498e-8a7e-663ad77d69e9`.
+  - Deploy evidence ledger record:
+    `evidence-a953e96e-543f-4980-b34c-5191ad6d6dda`.
+- Production deploy:
+  - Command:
+    `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-entry-keypad-direct-bind-20260613 --execute --json`.
+  - Backup:
+    `/Users/hermes-host/HermesMobile/backups/deploy/20260613T040625Z-plugin-finance-finance-entry-keypad-direct-bind-20260613`.
+  - Restarted launchd label: `com.hermesmobile.plugin.finance`.
+  - Production smoke passed:
+    `/finance.html` references `finance-replica-20260613b`,
+    `/app-finance-ui.js` contains direct `.wacai-keypad` `pointerup` /
+    `touchend` handlers, `/service-worker.js` contains
+    `finance-mcp-pwa-v140`, plugin manifest entry contains
+    `finance-replica-20260613b`, and `/api/finance/overview` returned HTTP
+    `200`.
+  - Deploy validation returned `codexIssueCount: 0`; profile audit retained
+    non-Codex issues outside this Finance deploy.
 
 ## 2026-06-12 Transaction Row Wacai Date-Time Fix
 
