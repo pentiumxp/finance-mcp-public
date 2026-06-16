@@ -154,8 +154,9 @@ The previous full handoff was archived and should be opened only when old proven
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
-- Status: in progress; code and docs updated locally, not yet committed or
-  deployed.
+- Status: committed, pushed to origin/public `main`, and deployed to Mac
+  production.
+- Commit: `e044a28b1caf` (`fix: align finance category icons and quote refresh`).
 - User-visible target:
   - bookkeeping/category/report icons should use stable Wacai-style category
     icons instead of falling back to generic icons for imported history;
@@ -178,6 +179,8 @@ The previous full handoff was archived and should be opened only when old proven
     providers only and does not substitute fixed rates.
   - Stock live summary and natural-language delta refresh quote rows in
     parallel instead of serializing all holdings.
+  - Static frontend version: `finance-replica-20260616c`; service worker cache:
+    `finance-mcp-pwa-v143`.
 - Validation passed so far:
   - `node --check adapters/finance-repository.js`;
   - `node --check adapters/finance-wacai-import-service.js`;
@@ -195,6 +198,25 @@ The previous full handoff was archived and should be opened only when old proven
     - Later aggregate provider probe returned `CNY=X` in 362 ms while stock
       symbols timed out at the bounded 5 s limit, indicating intermittent
       external quote availability rather than a local DB issue.
+- Production deployment:
+  - Command:
+    `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-category-icons-quote-refresh-20260616 --execute --json`.
+  - Backup:
+    `/Users/hermes-host/HermesMobile/backups/deploy/20260616T092823Z-plugin-finance-finance-category-icons-quote-refresh-20260616`.
+  - Restarted launchd label: `com.hermesmobile.plugin.finance`; deploy
+    validation returned `codexIssueCount: 0`.
+  - Production smoke passed for static version, service worker cache, manifest
+    entry, overview, and category icon backfill:
+    `/finance.html` contains `finance-replica-20260616c`,
+    `/service-worker.js` contains `finance-mcp-pwa-v143`, manifest entry
+    contains `finance-replica-20260616c`,
+    `/api/finance/overview?summary_only=1` returned `ok:true`, and production
+    `finance_categories` had `empty:0` icon rows.
+  - Production live quote smoke at the end of deployment returned bounded
+    timeouts for `0700.HK`, `TSLA`, and `CNY=X` in that run. Earlier same-turn
+    probes showed Eastmoney stock quotes returning quickly and `CNY=X` returning
+    in 248-362 ms, so provider availability is external/intermittent; UI retry
+    remains available and no fixed quote fallback is used.
 
 ## 2026-06-13 Stock Position Current Price Visibility Fix
 
