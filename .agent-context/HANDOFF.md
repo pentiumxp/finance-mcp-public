@@ -218,6 +218,31 @@ The previous full handoff was archived and should be opened only when old proven
     in 248-362 ms, so provider availability is external/intermittent; UI retry
     remains available and no fixed quote fallback is used.
 
+## 2026-06-17 Stock Quote Refresh Failure Diagnosis
+
+- Status: local fix in progress; not yet deployed at this handoff write.
+- Finding:
+  - Production `/api/finance/owner-stocks/summary?live=1` did call the live
+    summary path, but Tencent HK quote parsing used field index `6` for
+    `hk00700`.
+  - Tencent quote payload field index `3` is the current price (`447.400`);
+    field index `6` is a large volume/amount-like value (`24323142.0`). Using
+    index `6` made current Tencent HK prices and market values explode, which
+    made refresh appear broken even when a source returned data.
+  - Some quote endpoints were also unstable without browser-like headers.
+- Local fix:
+  - `adapters/finance-market-quote-provider.js` now sends bounded browser-like
+    `User-Agent` and `Referer` headers for quote requests.
+  - Tencent HK parsing now uses field index `3` for current price.
+  - Added a regression test ensuring Tencent HK current price is not parsed from
+    the volume field.
+- Local validation:
+  - `node --check adapters/finance-market-quote-provider.js`;
+  - `node --test tests/finance-market-quote-provider.test.js tests/finance-owner-stock-service.test.js tests/finance-server.test.js`;
+  - live local provider probes returned:
+    `0700.HK = 447.4` in 70-143 ms, `TSLA = 404.07` in 59 ms, and
+    `CNY=X = 6.7557` in 222 ms.
+
 ## 2026-06-13 Stock Position Current Price Visibility Fix
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

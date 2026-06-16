@@ -95,6 +95,7 @@ test("market quote provider can parse Tencent stock quotes", async () => {
   try {
     global.fetch = async (_url, options = {}) => {
       assert.ok(options.signal);
+      assert.ok(options.headers["User-Agent"]);
       return {
         ok: true,
         async text() {
@@ -103,6 +104,25 @@ test("market quote provider can parse Tencent stock quotes", async () => {
       };
     };
     assert.equal(await fetchTencentPrice("600519.SH", 100), 1255.67);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
+test("market quote provider reads Tencent HK current price, not volume", async () => {
+  const originalFetch = global.fetch;
+  try {
+    global.fetch = async (_url, options = {}) => {
+      assert.ok(options.signal);
+      assert.ok(options.headers.Referer);
+      return {
+        ok: true,
+        async text() {
+          return 'v_hk00700="100~腾讯控股~00700~447.400~459.600~462.600~24323142.0~0~0";\n';
+        },
+      };
+    };
+    assert.equal(await fetchTencentPrice("0700.HK", 100), 447.4);
   } finally {
     global.fetch = originalFetch;
   }

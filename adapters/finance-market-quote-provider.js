@@ -2,6 +2,10 @@
 
 const DEFAULT_MARKET_QUOTE_TIMEOUT_MS = 2500;
 const DEFAULT_SINA_QUOTE_TIMEOUT_MS = 5000;
+const MARKET_QUOTE_HEADERS = Object.freeze({
+  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1.15",
+  "Referer": "https://quote.eastmoney.com/",
+});
 
 function yahooFxSymbol(currency) {
   const code = String(currency || "USD").trim().toUpperCase();
@@ -24,7 +28,10 @@ async function fetchWithTimeout(url, timeoutMs) {
   const controller = typeof AbortController === "function" ? new AbortController() : null;
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
   try {
-    return await fetch(url, controller ? { signal: controller.signal } : undefined);
+    return await fetch(url, {
+      ...(controller ? { signal: controller.signal } : {}),
+      headers: MARKET_QUOTE_HEADERS,
+    });
   } catch (err) {
     if (err?.name === "AbortError") throw new Error("market_quote_timeout");
     throw err;
@@ -124,7 +131,7 @@ async function fetchTencentPrice(symbol, timeoutMs) {
   if (!response.ok) throw new Error(`market_quote_tencent_http_${response.status}:${symbol}`);
   const fields = parseTencentPayload(await response.text());
   let price = NaN;
-  if (mapped.startsWith("hk")) price = Number(fields[6] || fields[3]);
+  if (mapped.startsWith("hk")) price = Number(fields[3]);
   else if (mapped.startsWith("us")) price = Number(fields[3] || fields[1]);
   else price = Number(fields[3]);
   if (!Number.isFinite(price) || !(price > 0)) throw new Error(`market_quote_tencent_missing:${symbol}`);
