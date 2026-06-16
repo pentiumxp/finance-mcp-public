@@ -199,7 +199,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v140",
+      serviceWorker: "finance-mcp-pwa-v141",
     };
   }
 

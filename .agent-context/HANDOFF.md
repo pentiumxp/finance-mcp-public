@@ -265,6 +265,48 @@ The previous full handoff was archived and should be opened only when old proven
   - Deploy validation returned `codexIssueCount: 0`; profile audit retained
     non-Codex issues outside this Finance deploy.
 
+## 2026-06-16 Recurring Rule Dark-Mode Contrast Fix
+
+- Status: local fix validated; production deploy not run because this turn did
+  not include an explicit deploy request.
+- User-visible behavior:
+  - The 周期账新增 full-screen form now uses theme-aware recurring-rule surface
+    variables instead of hard-coded white fields.
+  - Dark mode fields, selects, date/time inputs, end-mode toggle, close button,
+    and save button use high-contrast dark surfaces and explicit native control
+    `color-scheme`.
+  - Chrome headless visual smoke showed contrast ratios: input/select/date/time
+    `14.61`, active end toggle `11.47`, close `13.54`, save `5.72`.
+- Static versions:
+  - frontend `finance-replica-20260616a`;
+  - service worker `finance-mcp-pwa-v141`.
+- Changed files:
+  - `public/styles.css`;
+  - `public/finance.html`;
+  - `public/app-finance-ui.js`;
+  - `public/service-worker.js`;
+  - `adapters/finance-hermes-embedded-plugin-service.js`;
+  - `scripts/deploy-mac-finance.ps1`;
+  - `tests/app-finance-ui.test.js`;
+  - `tests/finance-hermes-embedded-plugin-service.test.js`;
+  - `docs/TEST_MATRIX.md`.
+- Validation passed:
+  - `node --check public/app-finance-ui.js`;
+  - `node --check tests/app-finance-ui.test.js`;
+  - `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js`;
+  - `npm run check`;
+  - `npm test`;
+  - `git diff --check`;
+  - local Chrome headless visual computed-style smoke on
+    `http://127.0.0.1:18791/finance.html?embed=hermes`.
+- AI Ops:
+  - Intake classified the task as H3.
+  - Required-checks returned the center generic
+    `tests/architecture-code-test-harness-map.test.js`, which does not exist
+    in this Finance repo; the local equivalent `npm run check` passed.
+  - Test evidence ledger record:
+    `evidence-de3c76af-64a5-4134-872e-61d87305050c`.
+
 ## 2026-06-12 Transaction Row Wacai Date-Time Fix
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

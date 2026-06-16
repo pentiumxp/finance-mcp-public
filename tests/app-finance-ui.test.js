@@ -285,8 +285,20 @@ test("finance CSS follows Wacai replica baseline without disallowed patterns", (
   assert.match(css, /\.finance-recurring-row/);
   assert.match(css, /\.finance-recurring-entry-mode/);
   assert.match(css, /\.finance-recurring-badge/);
-  assert.match(css, /\.finance-recurring-field/);
-  assert.match(css, /\.finance-recurring-end-toggle/);
+  assert.match(css, /--recurring-field-bg:\s*#202126/);
+  assert.match(css, /--recurring-field-ink:\s*#f3f4f7/);
+  assert.match(css, /--recurring-save-bg:\s*#b83a26/);
+  assert.match(css, /:root\[data-theme="light"\][\s\S]*--recurring-field-bg:\s*#ffffff/);
+  assert.match(css, /\.finance-recurring-entry-mode\s*{[\s\S]*color-scheme:\s*dark/);
+  assert.match(css, /\.finance-recurring-entry-card\s*{[\s\S]*background:\s*var\(--recurring-card-bg\)/);
+  assert.match(css, /\.finance-recurring-field\s*{[\s\S]*background:\s*var\(--recurring-field-bg\)/);
+  assert.match(css, /\.finance-recurring-field\s*{[\s\S]*border:\s*1px solid var\(--recurring-field-border\)/);
+  assert.match(css, /\.finance-recurring-field input,[\s\S]*\.finance-recurring-field select\s*{[\s\S]*color:\s*var\(--recurring-field-ink\)/);
+  assert.match(css, /\.finance-recurring-field input,[\s\S]*\.finance-recurring-field select\s*{[\s\S]*color-scheme:\s*dark/);
+  assert.match(css, /\.finance-recurring-field input::-webkit-calendar-picker-indicator\s*{[\s\S]*filter:\s*none/);
+  assert.match(css, /\.finance-recurring-save\s*{[\s\S]*background:\s*var\(--recurring-save-bg\)/);
+  assert.match(css, /:root\[data-theme="light"\] \.finance-recurring-field input,[\s\S]*:root\[data-theme="light"\] \.finance-recurring-field select\s*{[\s\S]*color-scheme:\s*light/);
+  assert.match(css, /\.finance-recurring-end-toggle\s*{[\s\S]*background:\s*var\(--recurring-toggle-bg\)/);
   assert.match(css, /\.finance-recurring-form-status/);
   assert.match(css, /\.finance-entry-date-sheet/);
   assert.match(css, /\.finance-overlay\[data-entry-date-variant="wacai"\]\s*{[\s\S]*align-items:\s*end/);
@@ -765,9 +777,9 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260613b/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260613b/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v140/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260616a/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260616a/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v141/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -807,7 +819,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v140"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v141"/);
   assert.match(js, /lastKeypadHandledAt:\s*0/);
   assert.match(js, /lastKeypadHandledKey:\s*""/);
   assert.match(js, /lastKeypadHandledType:\s*""/);

@@ -61,6 +61,17 @@
   --entry-date-field-ink: #ffffff;
   --entry-date-field-border: rgba(255, 255, 255, 0.2);
   --entry-date-shadow: 0 -16px 34px rgba(0, 0, 0, 0.34);
+  --recurring-card-bg: #202126;
+  --recurring-field-bg: #202126;
+  --recurring-field-ink: #f3f4f7;
+  --recurring-field-muted: #a8afbd;
+  --recurring-field-border: rgba(255, 255, 255, 0.12);
+  --recurring-toggle-bg: #15161a;
+  --recurring-toggle-active-bg: #30333c;
+  --recurring-close-bg: #2b2e38;
+  --recurring-close-ink: #ffffff;
+  --recurring-save-bg: #b83a26;
+  --recurring-shadow: 0 12px 30px rgba(0, 0, 0, 0.32);
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", sans-serif;
   --finance-font-scale: 1;
 }
@@ -126,6 +137,17 @@
   --entry-date-field-ink: #25262b;
   --entry-date-field-border: rgba(20, 24, 35, 0.1);
   --entry-date-shadow: 0 -16px 34px rgba(0, 0, 0, 0.08);
+  --recurring-card-bg: rgba(255, 255, 255, 0.92);
+  --recurring-field-bg: #ffffff;
+  --recurring-field-ink: #25262b;
+  --recurring-field-muted: #555862;
+  --recurring-field-border: rgba(20, 24, 35, 0.08);
+  --recurring-toggle-bg: rgba(17, 24, 39, 0.06);
+  --recurring-toggle-active-bg: #ffffff;
+  --recurring-close-bg: #ffffff;
+  --recurring-close-ink: #111827;
+  --recurring-save-bg: var(--wacai-orange);
+  --recurring-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
 }
 
 @media (prefers-color-scheme: light) {
@@ -173,6 +195,17 @@
     --entry-placeholder: #25262b;
     --entry-icon-bg: #e9eaee;
     --entry-icon-muted: #9aa0ad;
+    --recurring-card-bg: rgba(255, 255, 255, 0.92);
+    --recurring-field-bg: #ffffff;
+    --recurring-field-ink: #25262b;
+    --recurring-field-muted: #555862;
+    --recurring-field-border: rgba(20, 24, 35, 0.08);
+    --recurring-toggle-bg: rgba(17, 24, 39, 0.06);
+    --recurring-toggle-active-bg: #ffffff;
+    --recurring-close-bg: #ffffff;
+    --recurring-close-ink: #111827;
+    --recurring-save-bg: var(--wacai-orange);
+    --recurring-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -3206,16 +3239,19 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
   display: grid;
   align-content: start;
   gap: 12px;
-  color: var(--entry-ink);
+  color: var(--recurring-field-ink);
+  color-scheme: dark;
 }
 
 .finance-recurring-entry-card {
   position: relative;
   min-height: 96px;
   padding: 42px 16px 16px;
-  background: rgba(255, 255, 255, 0.86);
+  color: var(--recurring-field-ink);
+  background: var(--recurring-card-bg);
   border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--recurring-field-border);
+  box-shadow: var(--recurring-shadow);
 }
 
 .finance-recurring-badge {
@@ -3241,8 +3277,8 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
   min-height: 62px;
   border: 0;
   border-radius: 18px;
-  color: #111827;
-  background: #fff;
+  color: var(--recurring-close-ink);
+  background: var(--recurring-close-bg);
   font: inherit;
   font-weight: 820;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
@@ -3277,8 +3313,9 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
   grid-template-columns: 64px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
-  color: var(--entry-muted);
-  background: #fff;
+  color: var(--recurring-field-muted);
+  background: var(--recurring-field-bg);
+  border: 1px solid var(--recurring-field-border);
   border-radius: 10px;
   font-size: 13px;
   font-weight: 760;
@@ -3289,12 +3326,28 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
   min-width: 0;
   min-height: 38px;
   border: 0;
-  color: var(--entry-ink);
+  color: var(--recurring-field-ink);
   background: transparent;
   font: inherit;
   font-size: 16px;
   font-weight: 800;
   outline: 0;
+  color-scheme: dark;
+}
+
+.finance-recurring-field input[type="date"],
+.finance-recurring-field input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.finance-recurring-field input::-webkit-calendar-picker-indicator {
+  opacity: 0.95;
+  filter: none;
+}
+
+.finance-recurring-field input::placeholder {
+  color: var(--recurring-field-muted);
 }
 
 .finance-recurring-end-field {
@@ -3320,7 +3373,7 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 3px;
-  background: rgba(17, 24, 39, 0.06);
+  background: var(--recurring-toggle-bg);
   border-radius: 8px;
 }
 
@@ -3329,7 +3382,7 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
   min-height: 28px;
   border: 0;
   border-radius: 6px;
-  color: var(--entry-muted);
+  color: var(--recurring-field-muted);
   background: transparent;
   font: inherit;
   font-size: 14px;
@@ -3337,8 +3390,8 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
 }
 
 .finance-recurring-end-toggle button.active {
-  color: var(--entry-ink);
-  background: #fff;
+  color: var(--recurring-field-ink);
+  background: var(--recurring-toggle-active-bg);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
@@ -3348,7 +3401,7 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
 
 .finance-recurring-form-status {
   min-height: 20px;
-  color: var(--entry-muted);
+  color: var(--recurring-field-muted);
   font-size: 13px;
   font-weight: 760;
 }
@@ -3367,7 +3420,7 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
   border: 0;
   border-radius: 10px;
   color: #fff;
-  background: var(--wacai-orange);
+  background: var(--recurring-save-bg);
   font: inherit;
   font-size: 16px;
   font-weight: 820;
@@ -3375,6 +3428,19 @@ html.finance-entry-note-focus .finance-overlay[data-entry-note-active="true"] .f
 
 .finance-recurring-save:disabled {
   opacity: 0.72;
+}
+
+:root[data-theme="light"] .finance-recurring-entry-mode {
+  color-scheme: light;
+}
+
+:root[data-theme="light"] .finance-recurring-field input,
+:root[data-theme="light"] .finance-recurring-field select {
+  color-scheme: light;
+}
+
+:root[data-theme="light"] .finance-recurring-field input::-webkit-calendar-picker-indicator {
+  filter: none;
 }
 
 .finance-report-picker-sheet header {

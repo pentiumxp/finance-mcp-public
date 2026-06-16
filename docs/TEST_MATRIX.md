@@ -352,6 +352,11 @@ node tests\app-finance-ui.test.js
 - bookkeeping date sheet UI: in dark mode the date sheet must be a compact
   bottom sheet with high-contrast dark surfaces, white date/time input text,
   44px-or-taller controls, and no full-page blank spacer.
+- recurring-rule create UI: in dark mode the full-screen create form, summary
+  card, text fields, selects, date/time fields, end-mode segmented control, and
+  close/save buttons must use dark surfaces with high-contrast text and explicit
+  native control `color-scheme`; it must not render white fields with white or
+  near-white text.
 - delayed refresh protection: client-version polling must not immediately reload while the user is in the bookkeeping view, a note/date/member/tag sheet, or an open left-swipe action state.
 - local bookkeeping draft restore: changing non-zero amount, tags, note, or
   merchant must persist a ledger-scoped local draft; default date, category,
