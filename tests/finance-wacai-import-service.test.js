@@ -85,6 +85,8 @@ test("imports Wacai rows with hierarchy and source fields", () => {
   const hkd = transactions.find((row) => row.currency === "HKD");
   assert.equal(hkd.amount, "1000.00");
   assert.equal(hkd.accountName, "港币");
+  assert.equal(hkd.categoryName, "生活其他");
+  assert.equal(hkd.categoryIcon, "home-supplies");
   const source = runtime.repository.getTransactionSourceFields(hkd.id);
   const rawRow = JSON.parse(source.raw_row_json);
   assert.equal(source.raw_amount, "10");
@@ -98,5 +100,24 @@ test("imports Wacai rows with hierarchy and source fields", () => {
   assert.equal(rawRow.收付账户, "港币");
   assert.equal(runtime.repository.listCurrencies().some((row) => row.code === "HKD" && row.display_name === "港元"), true);
   assert.equal(runtime.repository.listMembers("daily").some((row) => row.display_name === "家庭公用"), true);
+  const categories = runtime.repository.listCategories("daily", "expense");
+  assert.equal(categories.some((row) => row.name === "家庭开销" && row.icon === "family-bill"), true);
+  assert.equal(categories.some((row) => row.name === "生活其他" && row.icon === "home-supplies"), true);
+  assert.equal(categories.some((row) => row.name === "燃气费" && row.icon === "utility-power"), true);
+  runtime.close();
+});
+
+test("repository backfills stable icons for existing Wacai category paths", () => {
+  const runtime = createTestRuntime();
+  const parent = runtime.repository.upsertCategory({ ledgerId: "daily", type: "expense", name: "餐饮" });
+  runtime.repository.upsertCategory({ ledgerId: "daily", type: "expense", parentId: parent.id, name: "夜宵" });
+  runtime.repository.db.prepare("UPDATE finance_categories SET icon = '' WHERE name IN ('餐饮', '夜宵')").run();
+
+  const result = runtime.repository.backfillCategoryIcons();
+  const categories = runtime.repository.listCategories("daily", "expense");
+
+  assert.equal(result.updated >= 2, true);
+  assert.equal(categories.some((row) => row.name === "餐饮" && row.icon === "food-lunch"), true);
+  assert.equal(categories.some((row) => row.name === "夜宵" && row.icon === "food-dinner"), true);
   runtime.close();
 });

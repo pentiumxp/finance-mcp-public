@@ -152,6 +152,50 @@ The previous full handoff was archived and should be opened only when old proven
   - Deploy validation returned `codexIssueCount: 0`; profile audit retained
     non-Codex issues outside this Finance deploy.
 
+## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
+
+- Status: in progress; code and docs updated locally, not yet committed or
+  deployed.
+- User-visible target:
+  - bookkeeping/category/report icons should use stable Wacai-style category
+    icons instead of falling back to generic icons for imported history;
+  - asset FX and stock quote refresh failures should leave a small retry icon
+    button on the page.
+- Implementation notes:
+  - `adapters/finance-category-icons.js` maps imported Wacai category paths to
+    stable icon keys.
+  - Wacai import passes the path-derived icon into `finance_categories.icon`.
+  - Runtime startup calls `repository.backfillCategoryIcons()`; backfill only
+    fills empty or `category-generic` icons and does not overwrite an explicit
+    non-generic icon.
+  - Transaction/report projections carry category icon fields so frontend rows,
+    quick category chips, category picker rows, and report rows can prefer stored
+    icon keys.
+  - Asset and stock tabs render compact refresh icon buttons wired to the
+    existing live FX/quote endpoints.
+  - Market quote provider now tries domestic stock sources first (Eastmoney,
+    Tencent, then Sina) before Yahoo/public fallbacks; FX still uses live
+    providers only and does not substitute fixed rates.
+  - Stock live summary and natural-language delta refresh quote rows in
+    parallel instead of serializing all holdings.
+- Validation passed so far:
+  - `node --check adapters/finance-repository.js`;
+  - `node --check adapters/finance-wacai-import-service.js`;
+  - `node --check adapters/finance-category-icons.js`;
+  - `node --check adapters/finance-transaction-service.js`;
+  - `node --check adapters/finance-report-service.js`;
+  - `node --check adapters/finance-market-quote-provider.js`;
+  - `node --check public/app-finance-ui.js`;
+  - `node --test tests/finance-market-quote-provider.test.js tests/finance-wacai-import-service.test.js tests/app-finance-ui.test.js tests/finance-owner-asset-service.test.js tests/finance-owner-stock-service.test.js tests/finance-server.test.js`;
+  - Home AI center check:
+    `cd /Users/hermes-dev/HermesMobileDev/app && node tests/architecture-code-test-harness-map.test.js`.
+  - Live provider probes during implementation:
+    - Eastmoney direct probes returned `0700.HK` in 51 ms and `TSLA` in 8 ms in
+      one run.
+    - Later aggregate provider probe returned `CNY=X` in 362 ms while stock
+      symbols timed out at the bounded 5 s limit, indicating intermittent
+      external quote availability rather than a local DB issue.
+
 ## 2026-06-13 Stock Position Current Price Visibility Fix
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

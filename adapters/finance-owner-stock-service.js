@@ -298,10 +298,7 @@ function createFinanceOwnerStockService({ repository, quoteProvider = fetchYahoo
       return { latest: null, snapshots: [], snapshot_count: 0, latest_date: null, live: true };
     }
     const rows = repository.listOwnerStockPositions(latest.id);
-    const positions = [];
-    for (const [rowIndex, row] of rows.entries()) {
-      positions.push(await livePricedPositionInput(row, rowIndex));
-    }
+    const positions = await Promise.all(rows.map((row, rowIndex) => livePricedPositionInput(row, rowIndex)));
     const projection = buildSnapshotProjectionFromPositions({
       financeUserId,
       asOfDate: clean(input.asOfDate || input.as_of_date) || todayIso(),
@@ -358,6 +355,10 @@ function createFinanceOwnerStockService({ repository, quoteProvider = fetchYahoo
 
   async function livePricedPositionInput(position = {}, index = 0) {
     const currency = clean(position.currency || "USD").toUpperCase();
+    const [currentPrice, fxToBaseRate] = await Promise.all([
+      quoteProvider(position.ticker),
+      quoteProvider(yahooFxSymbol(currency)),
+    ]);
     return {
       position_key: position.positionKey,
       label: position.label,
@@ -367,8 +368,8 @@ function createFinanceOwnerStockService({ repository, quoteProvider = fetchYahoo
       quantity_units: quantityMajor(position.quantityUnitsMicro),
       average_cost: majorFromMinor(position.averageCostMinor, position.scale),
       opening_price: majorFromMinor(position.openingPriceMinor, position.scale) || majorFromMinor(position.currentPriceMinor, position.scale),
-      current_price: await quoteProvider(position.ticker),
-      fx_to_base_rate: await quoteProvider(yahooFxSymbol(currency)),
+      current_price: currentPrice,
+      fx_to_base_rate: fxToBaseRate,
       sort_order: position.sortOrder ?? index,
       source_row_index: position.sourceRowIndex ?? index + 1,
     };
@@ -404,10 +405,7 @@ function createFinanceOwnerStockService({ repository, quoteProvider = fetchYahoo
     if (hasOwnValue(input, "averageCost") || hasOwnValue(input, "average_cost")) {
       nextRows[index].averageCostMinor = decimalToMinor(firstOwnValue(input, ["averageCost", "average_cost"]), nextRows[index].scale || 2);
     }
-    const positions = [];
-    for (const [rowIndex, row] of nextRows.entries()) {
-      positions.push(await livePricedPositionInput(row, rowIndex));
-    }
+    const positions = await Promise.all(nextRows.map((row, rowIndex) => livePricedPositionInput(row, rowIndex)));
     return upsertSnapshot({
       as_of_date: clean(input.asOfDate || input.as_of_date) || todayIso(),
       base_currency: latest.baseCurrency || "USD",

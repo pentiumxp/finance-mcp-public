@@ -875,6 +875,46 @@ html.finance-input-focus body.finance-embed .finance-shell {
   font-weight: 680;
 }
 
+.finance-live-refresh-row {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 680;
+}
+
+.finance-live-refresh-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.finance-live-refresh-button {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  color: var(--ink);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.finance-live-refresh-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.finance-live-refresh-button:disabled {
+  opacity: 0.45;
+}
+
 .finance-asset-hero {
   min-width: 0;
   display: grid;
@@ -906,7 +946,17 @@ html.finance-input-focus body.finance-embed .finance-shell {
 }
 
 .finance-stock-hero {
+  position: relative;
   background: linear-gradient(135deg, #263240, #2f4d3d);
+}
+
+.finance-stock-refresh-button {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.18);
+  border-color: rgba(255, 255, 255, 0.28);
 }
 
 .finance-stock-row .finance-row-meta {

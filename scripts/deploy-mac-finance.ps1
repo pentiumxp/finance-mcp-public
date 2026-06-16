@@ -7,8 +7,8 @@ param(
   [string]$ServiceLabel = "com.hermesmobile.plugin.finance",
   [int]$Port = 8791,
   [string]$PasswordFile = "",
-  [string]$ExpectedStaticVersion = "finance-replica-20260616b",
-  [string]$ExpectedServiceWorker = "finance-mcp-pwa-v142"
+  [string]$ExpectedStaticVersion = "finance-replica-20260616c",
+  [string]$ExpectedServiceWorker = "finance-mcp-pwa-v143"
 )
 
 $ErrorActionPreference = "Stop"

@@ -1,6 +1,7 @@
 "use strict";
 
 const crypto = require("node:crypto");
+const { categoryIconForPath } = require("./finance-category-icons");
 
 const CURRENCY_MAP = Object.freeze({
   人民币: "CNY",
@@ -93,11 +94,13 @@ function resolveCategory(repository, { ledgerId, type, categoryPath }) {
   let parentId = "";
   let category = null;
   parts.forEach((part, index) => {
+    const path = parts.slice(0, index + 1).join("/");
     category = repository.upsertCategory({
       ledgerId,
       type,
       parentId,
       name: part,
+      icon: categoryIconForPath(path, type),
       sortOrder: (index + 1) * 10,
     });
     parentId = category.id;

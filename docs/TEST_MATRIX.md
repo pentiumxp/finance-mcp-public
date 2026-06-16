@@ -42,6 +42,7 @@ node --check adapters\<changed-file>.js
 | `tests/finance-owner-asset-service.test.js` | Owner-only asset snapshots, component replacement, MCP dispatch, and non-Owner denial |
 | `tests/finance-owner-asset-import.test.js` | Owner asset workbook grouped-year import, yearly FX source, and missing-component omission |
 | `tests/finance-owner-stock-service.test.js` | Stock holding snapshots, user partitioning, live valuation MCP summary, and natural-language position deltas |
+| `tests/finance-market-quote-provider.test.js` | Bounded market quote timeout plus Eastmoney/Tencent/Sina/Yahoo/FX/stock fallback parsing |
 | `tests/finance-mcp-server.test.js` | MCP dispatcher 和 tool schema |
 | `tests/finance-tool-contract.test.js` | MCP tool contract registry、server glue 边界、attachment schema 常量复用 |
 | `tests/finance-attachment-input-service.test.js` | 附件 payload source 归一化、上传路径 allowlist、`MEDIA:<path>` 兼容和错误码 |
@@ -49,7 +50,7 @@ node --check adapters\<changed-file>.js
 | `tests/finance-nas-hot-restart-script.test.js` | NAS hot restart script scope, no embedded credentials, wrapper/process restart contract |
 | `tests/finance-platform-contract-smoke.test.js` | Finance-local platform/MCP contract smoke script |
 | `tests/finance-server.test.js` | LAN listen 默认值、client-version、loopback bridge、callback URL policy |
-| `tests/finance-wacai-import-service.test.js` | Wacai import mapping/source fields |
+| `tests/finance-wacai-import-service.test.js` | Wacai import mapping/source fields and stable category icon backfill |
 | `tests/app-finance-ui.test.js` | UI shell、导航、报表、下钻、自动刷新 contract |
 
 ## 3. H1 对应测试
@@ -564,9 +565,10 @@ Coverage requirements:
   returns only duplicate rows, it requests a larger first-window limit and
   appends only unseen rows. This protects NAS deployments whose static source is
   updated while the Finance container has not yet reloaded backend route code.
-- Wacai-like category icon coverage checks that common imported category names
-  map to specific colored circular glyphs, and that generic fallback remains
-  only for unknown categories.
+- Wacai-like category icon coverage checks that common imported category paths
+  populate `finance_categories.icon`, transaction projections expose
+  `categoryIcon`, category/report UI prefers stored icon keys, and generic
+  fallback remains only for unknown categories.
 - `user_xuxin` owns the existing `daily` ledger and imported Wacai history.
 - Hermes administrator workspace resolves to `user_xuxin`.
 - Approved new Hermes workspace creates an isolated Finance user and default ledger.

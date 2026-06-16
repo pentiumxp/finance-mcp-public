@@ -23,6 +23,7 @@ function createFinanceRuntime(options = {}) {
   const repository = createFinanceRepository({ dbPath });
   repository.migrate();
   repository.seedDefaults();
+  repository.backfillCategoryIcons();
   const transactionService = createFinanceTransactionService({ repository });
   const reportService = createFinanceReportService({ repository });
   const recurringService = createFinanceRecurringService({ repository, transactionService });

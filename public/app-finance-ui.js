@@ -157,6 +157,7 @@
     ["家庭支出", "family-bill"],
     ["家庭开销", "family-bill"],
     ["投资", "investment"],
+    ["股票", "investment"],
     ["音像", "media"],
     ["快递邮政", "shipping"],
     ["交通", "transport"],
@@ -199,7 +200,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v142",
+      serviceWorker: "finance-mcp-pwa-v143",
     };
   }
 
@@ -1325,8 +1326,16 @@
     return `${sign}${displayAbsoluteMoneyAmount(row, "0")}${suffix}`;
   }
 
-  function categoryIconKey(name = "") {
-    const clean = String(name || "").trim();
+  function categoryIconKey(input = "") {
+    if (input && typeof input === "object") {
+      const explicit = String(input.icon || input.categoryIcon || "").trim();
+      if (explicit) return explicit;
+      const path = [input.parentCategoryName || input.parent_category_name || "", input.name || input.categoryName || input.category_name || ""]
+        .filter(Boolean)
+        .join("/");
+      if (path) return categoryIconKey(path);
+    }
+    const clean = String(input || "").trim();
     const aliases = new Map([
       ["家庭开销", "family-bill"],
       ["税费手续费", "tax-fee"],
@@ -1395,9 +1404,13 @@
     return icons[key] || icons["category-generic"];
   }
 
-  function iconSpan(name, extraClass = "") {
-    const key = categoryIconKey(name);
+  function iconSpan(category, extraClass = "") {
+    const key = categoryIconKey(category);
     return `<span class="finance-category-symbol svg-icon icon-${key} ${extraClass}" aria-hidden="true">${categoryIconSvg(key)}</span>`;
+  }
+
+  function refreshIconSvg() {
+    return "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M20 6v5h-5\"/><path d=\"M4 18v-5h5\"/><path d=\"M18.2 9A7 7 0 0 0 6.6 6.6L4 9\"/><path d=\"M5.8 15A7 7 0 0 0 17.4 17.4L20 15\"/></svg>";
   }
 
   function setView(view) {
@@ -1421,11 +1434,14 @@
     if (!nav || nav.hidden) return;
     const status = $("[data-asset-status]");
     if (status) status.textContent = "刷新中";
+    $$("[data-refresh-owner-assets]").forEach((button) => { button.disabled = true; });
     try {
       const payload = await api("/api/finance/owner-assets/summary?refresh_live_fx=1");
       renderOwnerAssets(payload.result || null);
     } catch (err) {
       if (status) status.textContent = "实时刷新失败";
+    } finally {
+      $$("[data-refresh-owner-assets]").forEach((button) => { button.disabled = false; });
     }
   }
 
@@ -1434,11 +1450,14 @@
     if (!nav || nav.hidden) return;
     const status = $("[data-stock-status]");
     if (status) status.textContent = "刷新中";
+    $$("[data-refresh-owner-stocks]").forEach((button) => { button.disabled = true; });
     try {
       const payload = await api("/api/finance/owner-stocks/summary?live=1");
       renderOwnerStocks(payload.result || null);
     } catch (err) {
       if (status) status.textContent = "实时刷新失败";
+    } finally {
+      $$("[data-refresh-owner-stocks]").forEach((button) => { button.disabled = false; });
     }
   }
 
@@ -1577,6 +1596,12 @@
 
   function transactionRow(row) {
     const title = row.categoryName || typeLabel(row.type);
+    const category = {
+      name: title,
+      icon: row.categoryIcon,
+      parentCategoryName: row.parentCategoryName,
+      parentCategoryIcon: row.parentCategoryIcon,
+    };
     const detailLine = [row.note, row.merchantName].filter(Boolean).join(" · ");
     const dateLine = [formatTransactionRowDateTime(row.occurredAt), row.accountName, row.memberName].filter(Boolean).join(" · ");
     const hasImage = Number(row.imageAttachmentCount || 0) > 0 || Boolean(row.firstImageUrl);
@@ -1590,7 +1615,7 @@
       <div class="finance-swipe-row" data-swipe-transaction-id="${escapeHtml(row.id)}">
         <div class="finance-swipe-actions" aria-hidden="true" data-swipe-actions></div>
         <button type="button" class="finance-row finance-row-button" data-transaction-id="${escapeHtml(row.id)}">
-          ${iconSpan(title, "finance-row-icon")}
+          ${iconSpan(category, "finance-row-icon")}
           <div class="finance-row-body">
             <div class="finance-row-title">${escapeHtml(title)}</div>
             ${detailLine ? `<div class="finance-row-detail">${escapeHtml(detailLine)}</div>` : ""}
@@ -2174,7 +2199,10 @@
         <div><span>年度回报</span><strong>${formatBps(selected.usd_annual_return_bps)}</strong></div>
         <div><span>总回报倍数</span><strong>${formatMultipleBps(selected.usd_total_return_multiple_bps)}</strong></div>
       </div>
-      <div class="finance-asset-live-rate">当前汇率 USD/CNY ${escapeHtml(selected.current_usd_cny_rate || summary.current_fx_error || "刷新中")}</div>
+      <div class="finance-live-refresh-row">
+        <span>当前汇率 USD/CNY ${escapeHtml(selected.current_usd_cny_rate || summary.current_fx_error || "刷新中")}</span>
+        <button type="button" class="finance-live-refresh-button" data-refresh-owner-assets aria-label="刷新资产汇率">${refreshIconSvg()}</button>
+      </div>
     `;
     historyTarget.innerHTML = `
       <section class="finance-account-group">
@@ -2236,6 +2264,7 @@
         <span>${escapeHtml(selected.as_of_date)} 股票组合市值</span>
         <strong>${formatCurrencyMinor(selected.total_market_value_minor, selected.base_currency || "USD", selected.base_scale || 2)}</strong>
         <small>价格/汇率 ${escapeHtml(selected.price_as_of || selected.as_of_date || "")}</small>
+        <button type="button" class="finance-live-refresh-button finance-stock-refresh-button" data-refresh-owner-stocks aria-label="刷新股票价格和汇率">${refreshIconSvg()}</button>
       </div>
       <div class="finance-asset-metrics">
         <div><span>当年变动</span><strong>${formatBps(selected.annual_change_bps)}</strong></div>
@@ -2498,7 +2527,7 @@
       const amount = displayMoneyAmount(item, amountFallback ? "0" : "");
       return `
         <${tag} ${attrs}>
-          ${iconSpan(item.label, "finance-report-icon").replace("aria-hidden=\"true\"", `style="--item-color:${color}" aria-hidden="true"`)}
+          ${iconSpan({ name: item.label, icon: item.icon }, "finance-report-icon").replace("aria-hidden=\"true\"", `style="--item-color:${color}" aria-hidden="true"`)}
           <div class="finance-report-main">
             <div class="finance-report-line">
               <strong>${escapeHtml(item.label)}</strong>
@@ -3431,7 +3460,8 @@
     const icon = $("[data-entry-category-icon]");
     if (label) label.textContent = selected || "类别";
     if (icon) {
-      const key = categoryIconKey(selected);
+      const selectedRow = state.entryCategories?.find((row) => row.name === selected) || selected;
+      const key = categoryIconKey(selectedRow);
       icon.className = `finance-category-symbol svg-icon icon-${key}`;
       icon.innerHTML = categoryIconSvg(key);
     }
@@ -3652,7 +3682,7 @@
     const quickCategories = sortedCategories.slice(0, 16);
     target.innerHTML = quickCategories.map((row) => `
       <button type="button" class="finance-category-chip" data-category-quick="${escapeHtml(row.name)}">
-        ${iconSpan(row.name)}
+        ${iconSpan(row)}
         <strong>${escapeHtml(row.name)}</strong>
       </button>
     `).join("") + `
@@ -3696,7 +3726,7 @@
     const selected = row.name === state.selectedEntryCategory ? " active" : "";
     return `
       <button type="button" class="finance-category-picker-item${selected}" data-category-picker-select="${escapeHtml(row.name)}">
-        ${iconSpan(row.name)}
+        ${iconSpan(row)}
         <strong>${escapeHtml(row.name)}</strong>
       </button>
     `;
@@ -3769,7 +3799,7 @@
             return `
               <section class="finance-category-picker-section">
                 <button type="button" class="finance-category-picker-parent${open ? " expanded" : ""}${active ? " active" : ""}" ${hasChildren ? `data-category-picker-parent="${escapeHtml(section.parent.id)}"` : `data-category-picker-select="${escapeHtml(section.parent.name)}"`}>
-                  ${iconSpan(section.parent.name)}
+                  ${iconSpan(section.parent)}
                   <strong>${escapeHtml(section.parent.name)}</strong>
                   <span>${hasChildren ? `${section.children.length}项` : "选择"}</span>
                 </button>
@@ -4135,6 +4165,18 @@
       if (stockDate) {
         state.selectedOwnerStockDate = String(stockDate.dataset.stockDate || "");
         renderOwnerStocks();
+        return;
+      }
+      const assetRefresh = event.target.closest("[data-refresh-owner-assets]");
+      if (assetRefresh) {
+        event.preventDefault();
+        refreshOwnerAssetsLive().catch(showError);
+        return;
+      }
+      const stockRefresh = event.target.closest("[data-refresh-owner-stocks]");
+      if (stockRefresh) {
+        event.preventDefault();
+        refreshOwnerStocksLive().catch(showError);
         return;
       }
       const nav = event.target.closest("[data-nav-view]");

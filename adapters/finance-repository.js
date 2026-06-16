@@ -4,6 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { DatabaseSync } = require("node:sqlite");
+const { categoryIconForPath } = require("./finance-category-icons");
 
 const CURRENT_SCHEMA_VERSION = 12;
 
@@ -755,6 +756,9 @@ function createFinanceRepository({ dbPath, idGenerator = defaultId, clock = nowI
     if (!tableColumns("finance_attachments").includes("thumbnail_mime_type")) {
       db.exec("ALTER TABLE finance_attachments ADD COLUMN thumbnail_mime_type TEXT NOT NULL DEFAULT ''");
     }
+    if (!tableColumns("finance_categories").includes("icon")) {
+      db.exec("ALTER TABLE finance_categories ADD COLUMN icon TEXT NOT NULL DEFAULT ''");
+    }
     const ownerAssetColumns = tableColumns("finance_owner_asset_snapshots");
     if (!ownerAssetColumns.includes("current_usd_cny_ppm")) {
       db.exec("ALTER TABLE finance_owner_asset_snapshots ADD COLUMN current_usd_cny_ppm INTEGER NOT NULL DEFAULT 0");
@@ -877,20 +881,20 @@ function createFinanceRepository({ dbPath, idGenerator = defaultId, clock = nowI
       `).run(...row, ts, ts);
     }
     const categories = [
-      ["cat_food", "daily", "expense", "餐饮", 10],
-      ["cat_transport", "daily", "expense", "交通", 20],
-      ["cat_home", "daily", "expense", "居家", 30],
-      ["cat_clothing", "daily", "expense", "服饰", 40],
-      ["cat_health", "daily", "expense", "医疗", 50],
-      ["cat_salary", "daily", "income", "工资薪水", 10],
-      ["cat_bonus", "daily", "income", "奖金", 20],
-      ["cat_refund", "daily", "income", "退款", 30],
+      ["cat_food", "daily", "expense", "餐饮", "food-lunch", 10],
+      ["cat_transport", "daily", "expense", "交通", "transport", 20],
+      ["cat_home", "daily", "expense", "居家", "home-house", 30],
+      ["cat_clothing", "daily", "expense", "服饰", "clothing-shirt", 40],
+      ["cat_health", "daily", "expense", "医疗", "medical-pill", 50],
+      ["cat_salary", "daily", "income", "工资薪水", "income-salary", 10],
+      ["cat_bonus", "daily", "income", "奖金", "income-bonus", 20],
+      ["cat_refund", "daily", "income", "退款", "income-refund", 30],
     ];
     for (const row of categories) {
       db.prepare(`
         INSERT OR IGNORE INTO finance_categories
-          (id, ledger_id, type, name, sort_order, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+          (id, ledger_id, type, name, icon, sort_order, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `).run(...row, ts, ts);
     }
   }
@@ -1356,20 +1360,49 @@ function createFinanceRepository({ dbPath, idGenerator = defaultId, clock = nowI
     return type ? db.prepare(sql).all(ledgerId, type) : db.prepare(sql).all(ledgerId);
   }
 
-  function upsertCategory({ ledgerId = "daily", type, name, parentId = "", sortOrder = 0 }) {
+  function categoryPath(row, byId) {
+    const parts = [];
+    let current = row;
+    const seen = new Set();
+    while (current && !seen.has(current.id)) {
+      seen.add(current.id);
+      if (current.name) parts.unshift(current.name);
+      current = current.parent_id ? byId.get(current.parent_id) : null;
+    }
+    return parts.join("/");
+  }
+
+  function backfillCategoryIcons() {
+    const rows = db.prepare("SELECT * FROM finance_categories ORDER BY ledger_id, type, parent_id, sort_order, name").all();
+    const byId = new Map(rows.map((row) => [row.id, row]));
+    const update = db.prepare("UPDATE finance_categories SET icon = ?, updated_at = ? WHERE id = ? AND icon <> ?");
+    let updated = 0;
+    for (const row of rows) {
+      if (row.icon && row.icon !== "category-generic") continue;
+      const icon = categoryIconForPath(categoryPath(row, byId) || row.name, row.type);
+      if (!icon || row.icon === icon) continue;
+      update.run(icon, clock(), row.id, icon);
+      updated += 1;
+    }
+    return { updated };
+  }
+
+  function upsertCategory({ ledgerId = "daily", type, name, parentId = "", icon = "", sortOrder = 0 }) {
     const clean = String(name || "").trim();
     if (!clean) throw new Error("category_name_required");
     const ts = clock();
     const id = idGenerator("cat");
+    const cleanIcon = String(icon || "").trim();
     db.prepare(`
       INSERT INTO finance_categories
-        (id, ledger_id, type, parent_id, name, sort_order, is_active, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
+        (id, ledger_id, type, parent_id, name, icon, sort_order, is_active, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
       ON CONFLICT(ledger_id, type, parent_id, name) DO UPDATE SET
+        icon = CASE WHEN excluded.icon <> '' THEN excluded.icon ELSE finance_categories.icon END,
         sort_order = CASE WHEN excluded.sort_order > 0 THEN excluded.sort_order ELSE finance_categories.sort_order END,
         is_active = 1,
         updated_at = excluded.updated_at
-    `).run(id, ledgerId, type, parentId || "", clean, sortOrder, ts, ts);
+    `).run(id, ledgerId, type, parentId || "", clean, cleanIcon, sortOrder, ts, ts);
     return db.prepare(`
       SELECT * FROM finance_categories
       WHERE ledger_id = ? AND type = ? AND parent_id = ? AND name = ?
@@ -1540,6 +1573,7 @@ function createFinanceRepository({ dbPath, idGenerator = defaultId, clock = nowI
   function transactionProjectionSql() {
     return `
       SELECT t.*, c.name AS category_name, c.parent_id AS category_parent_id, pc.name AS parent_category_name,
+             c.icon AS category_icon, pc.icon AS parent_category_icon,
              a.name AS account_name, ta.name AS target_account_name,
              m.display_name AS member_name, merchant.name AS merchant_name,
              COALESCE((
@@ -1746,6 +1780,7 @@ function createFinanceRepository({ dbPath, idGenerator = defaultId, clock = nowI
     applyTransactionFilters({ where, params, filters });
     return db.prepare(`
       SELECT t.*, c.name AS category_name, c.parent_id AS category_parent_id, pc.name AS parent_category_name,
+             c.icon AS category_icon, pc.icon AS parent_category_icon,
              a.name AS account_name, ta.name AS target_account_name,
              m.display_name AS member_name, merchant.name AS merchant_name
       FROM finance_transactions t
@@ -2305,6 +2340,7 @@ function createFinanceRepository({ dbPath, idGenerator = defaultId, clock = nowI
     listTransactions,
     migrate,
     replaceTransactionTags,
+    backfillCategoryIcons,
     replaceMemberVisibility,
     reportTagRows,
     reportRows,

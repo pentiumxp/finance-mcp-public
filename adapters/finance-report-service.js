@@ -202,7 +202,13 @@ function createFinanceReportService({ repository } = {}) {
         label = key;
       }
       const itemCurrency = mixedOriginalCurrency ? normalizeCurrency(row.currency || "CNY") : currency;
-      const existing = groups.get(key) || { key, label, amountMinor: 0, count: 0, currency: itemCurrency };
+      const icon = dimension === "category"
+        ? row.parent_category_icon || row.category_icon || ""
+        : dimension === "subcategory"
+          ? row.category_icon || ""
+          : "";
+      const existing = groups.get(key) || { key, label, icon, amountMinor: 0, count: 0, currency: itemCurrency };
+      if (!existing.icon && icon) existing.icon = icon;
       if (existing.currency !== itemCurrency) existing.currency = "MIXED";
       const amount = row.type === "income" ? rowAmount(row) : row.type === "expense" ? rowAmount(row) : 0;
       existing.amountMinor += metric === "net" && row.type === "expense" ? -amount : amount;
