@@ -326,7 +326,9 @@ The previous full handoff was archived and should be opened only when old proven
 
 ## 2026-06-16 Embedded WebKit First-Screen Loading Fix
 
-- Status: local fix validated; commit/deploy pending in this turn.
+- Status: committed, pushed to origin/public `main`, and deployed to Mac
+  production.
+- Commit: `d3e9bc9713be` (`fix: unblock embedded finance first screen`).
 - Problem:
   - Embedded WebKit plugin opens could wait a long time or remain blank because
     the first-screen `loadOverview()` called full `/api/finance/overview`.
@@ -364,6 +366,26 @@ The previous full handoff was archived and should be opened only when old proven
   - Intake classified the task as H3.
   - Test evidence ledger record:
     `evidence-468a6dd1-6e7d-4302-aff6-abfd32c2cafe`.
+  - Deploy evidence ledger record:
+    `evidence-9b4da678-adbe-48d7-b3dd-f744ef61f3b4`.
+- Production deploy:
+  - Command:
+    `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-embedded-first-screen-fast-overview-20260616 --execute --json`.
+  - Backup:
+    `/Users/hermes-host/HermesMobile/backups/deploy/20260616T085404Z-plugin-finance-finance-embedded-first-screen-fast-overview-20260616`.
+  - Restarted launchd label: `com.hermesmobile.plugin.finance`.
+  - Production smoke passed:
+    `/finance.html` references `finance-replica-20260616b`,
+    `/app-finance-ui.js` contains `summary_only: 1` first-screen overview and
+    `refreshOwnerAssetsLive`, `/service-worker.js` contains
+    `finance-mcp-pwa-v142`, plugin manifest entry contains
+    `finance-replica-20260616b`.
+  - Production timing after deploy:
+    `summary_only` overview `0.116 s`, full overview `2.59 s`, and Chrome
+    embedded first-screen smoke rendered in `187 ms` while requesting only
+    `/api/finance/overview?limit=30&currency=CNY&summary_only=1`.
+  - Deploy validation returned `codexIssueCount: 0`; profile audit retained
+    non-Codex issues outside this Finance deploy.
 
 ## 2026-06-12 Transaction Row Wacai Date-Time Fix
 
