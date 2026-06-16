@@ -324,6 +324,47 @@ The previous full handoff was archived and should be opened only when old proven
   - Deploy validation returned `codexIssueCount: 0`; profile audit retained
     non-Codex issues outside this Finance deploy.
 
+## 2026-06-16 Embedded WebKit First-Screen Loading Fix
+
+- Status: local fix validated; commit/deploy pending in this turn.
+- Problem:
+  - Embedded WebKit plugin opens could wait a long time or remain blank because
+    the first-screen `loadOverview()` called full `/api/finance/overview`.
+  - Production timing before the fix: static files and manifest returned in
+    about 1 ms, `/api/finance/overview?summary_only=1` returned in about 0.11 s,
+    but full `/api/finance/overview` took about 10.65 s due to live asset FX
+    refresh.
+- User-visible behavior:
+  - First-screen embedded loading now uses
+    `/api/finance/overview?limit=30&currency=<code>&summary_only=1`, so the
+    home page renders from local persisted data and does not wait on external
+    quote providers.
+  - Opening the `资产` tab refreshes live USD/CNY through
+    `/api/finance/owner-assets/summary?refresh_live_fx=1`; opening the `股票`
+    tab keeps the existing live stock refresh path.
+  - Yahoo/market quote fetches are bounded by
+    `FINANCE_MARKET_QUOTE_TIMEOUT_MS`, default `2500` ms, so stalled quote
+    providers return bounded refresh errors instead of blocking WebKit.
+- Static versions:
+  - frontend `finance-replica-20260616b`;
+  - service worker `finance-mcp-pwa-v142`.
+- Validation passed:
+  - `node --check public/app-finance-ui.js`;
+  - `node --check adapters/finance-market-quote-provider.js`;
+  - `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js tests/finance-server.test.js tests/finance-market-quote-provider.test.js`;
+  - `npm run check`;
+  - `npm test`;
+  - `git diff --check`;
+  - local patched service timing:
+    `summary_only` overview `0.006 s`, full overview `0.725 s`, asset live
+    refresh `0.244 s`;
+  - local Chrome embedded smoke rendered home in `38 ms` and only requested
+    `/api/finance/overview?limit=30&currency=CNY&summary_only=1`.
+- AI Ops:
+  - Intake classified the task as H3.
+  - Test evidence ledger record:
+    `evidence-468a6dd1-6e7d-4302-aff6-abfd32c2cafe`.
+
 ## 2026-06-12 Transaction Row Wacai Date-Time Fix
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

@@ -199,7 +199,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v141",
+      serviceWorker: "finance-mcp-pwa-v142",
     };
   }
 
@@ -1411,8 +1411,22 @@
     updateTopbar();
     scheduleUiProbe(`view:${view}`);
     postHermesNavigation();
+    if (view === "assets") refreshOwnerAssetsLive();
     if (view === "stocks") refreshOwnerStocksLive();
     if (view === ROOT_VIEW) applyPendingClientReload();
+  }
+
+  async function refreshOwnerAssetsLive() {
+    const nav = $("[data-owner-assets-nav]");
+    if (!nav || nav.hidden) return;
+    const status = $("[data-asset-status]");
+    if (status) status.textContent = "刷新中";
+    try {
+      const payload = await api("/api/finance/owner-assets/summary?refresh_live_fx=1");
+      renderOwnerAssets(payload.result || null);
+    } catch (err) {
+      if (status) status.textContent = "实时刷新失败";
+    }
   }
 
   async function refreshOwnerStocksLive() {
@@ -3882,14 +3896,14 @@
 
   async function loadOverview() {
     try {
-      const payload = await api(`/api/finance/overview?${queryString({ limit: TRANSACTION_PAGE_SIZE, currency: state.reportCurrency })}`);
+      const payload = await api(`/api/finance/overview?${queryString({ limit: TRANSACTION_PAGE_SIZE, currency: state.reportCurrency, summary_only: 1 })}`);
       renderOverview(payload);
       await applyStartupNavigation();
     } catch (err) {
       if (state.activeLedgerId && /finance_ledger_(not_found|access_denied)/.test(err.message || "")) {
         localStorage.removeItem("financeActiveLedgerId");
         state.activeLedgerId = "";
-        const payload = await api(`/api/finance/overview?${queryString({ limit: TRANSACTION_PAGE_SIZE })}`);
+        const payload = await api(`/api/finance/overview?${queryString({ limit: TRANSACTION_PAGE_SIZE, summary_only: 1 })}`);
         renderOverview(payload);
         await applyStartupNavigation();
         return;

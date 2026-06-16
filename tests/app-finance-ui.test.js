@@ -384,7 +384,7 @@ test("home transaction list loads 30 rows initially and appends pages at the bot
   assert.match(js, /state\.transactionPageOffset = state\.transactionRows\.length/);
   assert.match(js, /state\.transactionHasMore = rows\.length >= TRANSACTION_PAGE_SIZE/);
   assert.match(js, /function appendTransactionRows\(rows = \[\]\)/);
-  assert.match(js, /\/api\/finance\/overview\?\$\{queryString\(\{ limit: TRANSACTION_PAGE_SIZE \}\)\}/);
+  assert.match(js, /\/api\/finance\/overview\?\$\{queryString\(\{ limit: TRANSACTION_PAGE_SIZE, summary_only: 1 \}\)\}/);
   assert.match(js, /\/api\/finance\/transactions\?\$\{queryString\(\{[\s\S]*limit: TRANSACTION_PAGE_SIZE,[\s\S]*offset: requestOffset/);
   assert.match(js, /fallbackLimit = Math\.min\(requestOffset \+ TRANSACTION_PAGE_SIZE, TRANSACTION_LIST_CAP\)/);
   assert.match(js, /\/api\/finance\/transactions\?\$\{queryString\(\{ limit: fallbackLimit \}\)\}/);
@@ -484,6 +484,11 @@ test("report page renders Wacai-like statistics and client auto refresh", () => 
   assert.match(js, /summary_only:\s*1/);
   assert.match(js, /limit:\s*TRANSACTION_PAGE_SIZE/);
   assert.match(js, /renderOverview\(payload\)/);
+  assert.match(js, /async function loadOverview\(\)[\s\S]*summary_only:\s*1/);
+  assert.doesNotMatch(js, /async function loadOverview\(\)[\s\S]*queryString\(\{ limit: TRANSACTION_PAGE_SIZE, currency: state\.reportCurrency \}\)/);
+  assert.match(js, /if \(view === "assets"\) refreshOwnerAssetsLive\(\)/);
+  assert.match(js, /async function refreshOwnerAssetsLive\(\)/);
+  assert.match(js, /\/api\/finance\/owner-assets\/summary\?refresh_live_fx=1/);
   assert.match(js, /async function applyReportCurrency\(code\)/);
   assert.match(js, /await loadCurrencyOverview\(\)/);
   assert.doesNotMatch(js, /async function applyReportCurrency\(code\)[\s\S]*?await loadOverview\(\);[\s\S]*?if \(state\.activeView === "reports"\)/);
@@ -777,9 +782,9 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260616a/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260616a/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v141/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260616b/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260616b/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v142/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -819,7 +824,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v141"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v142"/);
   assert.match(js, /lastKeypadHandledAt:\s*0/);
   assert.match(js, /lastKeypadHandledKey:\s*""/);
   assert.match(js, /lastKeypadHandledType:\s*""/);

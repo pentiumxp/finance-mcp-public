@@ -554,20 +554,23 @@ The create-entry page keeps a local client draft:
 
 ### 11.6 Currency Switch And Live Stock Refresh
 
-The top-right report/home currency switch is a local summary/report filter, not
-a full app reload:
+The embedded first screen and top-right report/home currency switch use a local
+summary/report projection, not a live quote refresh:
 
-1. Frontend currency switching calls
+1. Frontend first-screen loading and currency switching call
    `GET /api/finance/overview?summary_only=1&currency=<code>` and renders the
    returned overview, including the selected-currency transaction list.
 2. `summary_only=1` may return local overview data such as transactions, master
-   data, asset summary, and persisted stock summary. It must not call live quote
-   or FX providers.
-3. Normal overview returns persisted stock snapshot metadata only for tab
-   visibility. The stock page itself refreshes
-   `/api/finance/owner-stocks/summary?live=1` when opened, preserving the
-   product rule that current stock valuation is live-priced while keeping
-   unrelated currency switching sub-second.
+   data, asset summary, and persisted stock summary. It must not call live asset
+   FX, stock quote, or stock FX providers.
+3. Asset and stock tabs refresh live data after the tab opens. The asset page
+   refreshes `/api/finance/owner-assets/summary?refresh_live_fx=1`; the stock
+   page refreshes `/api/finance/owner-stocks/summary?live=1`. This preserves
+   current valuation rules while keeping embedded WebKit first-screen loading
+   and unrelated currency switching sub-second.
+4. Market quote provider calls are bounded by `FINANCE_MARKET_QUOTE_TIMEOUT_MS`
+   (default 2500 ms), so Yahoo/market stalls surface as bounded refresh errors
+   instead of blanking the embedded first screen.
 
 ## 12. 测试实施
 

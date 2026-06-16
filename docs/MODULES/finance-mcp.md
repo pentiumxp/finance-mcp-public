@@ -93,14 +93,16 @@ Windows local runtime helpers:
   half-width card. Component row amounts are displayed in their component
   currency, so USD source components show USD while the headline total remains
   RMB.
-- Owner asset summary reads refresh current USD/CNY through the shared market
-  quote provider. UI overview/page loads and MCP
-  `finance.get_owner_asset_summary` persist `current_usd_cny_ppm`,
-  `current_total_assets_usd_minor`, `current_fx_updated_at`, and
-  `current_fx_source` on the latest snapshot before returning the summary. The
-  service must not use a fixed exchange-rate fallback when live FX fails. The
-  asset page must label current FX from `current_usd_cny_rate`, not the
-  historical workbook `fx_usd_cny_rate`.
+- Owner asset summary reads can refresh current USD/CNY through the shared
+  market quote provider. Embedded first-screen overview loads must use
+  `summary_only=1` and must not wait for live FX or stock quotes; the asset page
+  calls `/api/finance/owner-assets/summary?refresh_live_fx=1` after the tab
+  opens, and MCP `finance.get_owner_asset_summary` may refresh live FX. Live
+  refresh persists `current_usd_cny_ppm`, `current_total_assets_usd_minor`,
+  `current_fx_updated_at`, and `current_fx_source` on the latest snapshot before
+  returning the summary. The service must not use a fixed exchange-rate fallback
+  when live FX fails. The asset page must label current FX from
+  `current_usd_cny_rate`, not the historical workbook `fx_usd_cny_rate`.
 - Owner asset manual/MCP upserts recalculate USD-account annual return, total
   return multiple, and CAGR from the current USD component and prior annual USD
   return history. XLSX imports keep the workbook's explicit return metrics so
@@ -573,13 +575,17 @@ Schema parity: MCP schema advertises `subcategory`, `tag`, and structured
 HTTP/UI API 只服务独立本地 UI，不作为 Hermes Mobile 写账边界。
 
 `GET /api/finance/overview?summary_only=1&currency=<code>` is the lightweight
-UI path for switching the report/home currency. It returns the local overview
-payload, including the selected-currency transaction list and master data, so
-the visible home list changes with the selected currency. The fast path must
-not call live stock quote/FX providers; normal overview may include persisted
-Owner stock snapshot metadata so the `股票` tab can be shown, but live prices/FX
-are fetched only through `/api/finance/owner-stocks/summary?live=1` or the stock
-MCP summary tool.
+UI path for embedded first-screen loading and for switching the report/home
+currency. It returns the local overview payload, including the selected-currency
+transaction list and master data, so the visible home list changes with the
+selected currency. The fast path must not call live asset FX, stock quote, or
+stock FX providers; normal overview may include persisted Owner asset/stock
+snapshot metadata so the `资产` and `股票` tabs can be shown. Live asset FX is
+fetched only through `/api/finance/owner-assets/summary?refresh_live_fx=1`, and
+live stock prices/FX are fetched only through
+`/api/finance/owner-stocks/summary?live=1` or the stock MCP summary tool.
+Market quote provider calls are bounded by `FINANCE_MARKET_QUOTE_TIMEOUT_MS`
+(default 2500 ms) so external quote stalls do not keep embedded WebKit blank.
 
 ## 6. UI 功能
 

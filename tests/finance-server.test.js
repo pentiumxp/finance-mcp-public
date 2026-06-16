@@ -438,7 +438,7 @@ test("stock UI API exposes live user-partitioned stock summary", async () => {
   runtime.close();
 });
 
-test("overview summary_only avoids live stock refresh for fast currency switching", async () => {
+test("overview summary_only avoids live asset and stock refresh for fast embedded loading", async () => {
   let quoteCount = 0;
   const runtime = createTestRuntime({
     stockQuoteProvider: (symbol) => {
@@ -446,6 +446,16 @@ test("overview summary_only avoids live stock refresh for fast currency switchin
       return { "0700.HK": 510, "HKD=X": 7.8 }[symbol] || 1;
     },
   });
+  runtime.ownerAssetService.upsertSnapshot({
+    year: 2026,
+    as_of_date: "2026-06-11",
+    fx_usd_cny_rate: 7.25,
+    total_assets_cny: 725,
+    components: [
+      { component_key: "usd_account", label: "美元账户", currency: "USD", amount: 100 },
+      { component_key: "cny_bank", label: "银行", currency: "CNY", amount: 725 },
+    ],
+  }, { role: "owner", financeUserId: "user_xuxin" });
   runtime.ownerStockService.upsertSnapshot({
     as_of_date: "2026-06-11",
     positions: [
@@ -457,6 +467,8 @@ test("overview summary_only avoids live stock refresh for fast currency switchin
   const summaryOnly = await invokeRoute(routes, { path: "/api/finance/overview?currency=HKD&summary_only=1" });
   assert.equal(summaryOnly.status, 200);
   assert.equal(summaryOnly.json.ok, true);
+  assert.ok(summaryOnly.json.ownerAssetSummary);
+  assert.equal(summaryOnly.json.ownerAssetSummary.latest.current_fx_error, undefined);
   assert.ok(summaryOnly.json.ownerStockSummary);
   assert.equal(summaryOnly.json.ownerStockSummary.live, undefined);
   assert.ok(Array.isArray(summaryOnly.json.transactions));
@@ -464,6 +476,10 @@ test("overview summary_only avoids live stock refresh for fast currency switchin
   assert.ok(Array.isArray(summaryOnly.json.categories));
   assert.equal(summaryOnly.json.summary.appliedFilters.currency, "HKD");
   assert.equal(quoteCount, 0);
+
+  const liveAsset = await invokeRoute(routes, { path: "/api/finance/owner-assets/summary?refresh_live_fx=1" });
+  assert.equal(liveAsset.status, 200);
+  assert.equal(quoteCount, 1);
   runtime.close();
 });
 

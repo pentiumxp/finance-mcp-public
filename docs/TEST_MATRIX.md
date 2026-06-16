@@ -178,6 +178,10 @@ node tests\privacy-scan.test.js
   cards stacked in one column on the mobile asset page, and the UI must not use
   historical `fx_usd_cny_rate` as the current rate label. Tests must not allow a
   fixed FX fallback when live FX fails.
+- Embedded Finance first-screen loading must use `summary_only=1` overview data
+  and avoid live asset/stock quote refresh. Asset and stock tabs may refresh live
+  quote data after the tab opens, and market quote fetches must be bounded by a
+  timeout so WebKit cannot remain blank while external quote providers stall.
 - Manual/MCP Owner asset upserts recalculate current-year USD annual return,
   total return multiple, and CAGR from the updated USD component and prior
   annual USD return history, while `owner_asset_xlsx` imports preserve the
