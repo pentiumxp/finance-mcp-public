@@ -220,7 +220,9 @@ The previous full handoff was archived and should be opened only when old proven
 
 ## 2026-06-17 Stock Quote Refresh Failure Diagnosis
 
-- Status: local fix in progress; not yet deployed at this handoff write.
+- Status: committed, pushed to origin/public `main`, and deployed to Mac
+  production.
+- Commit: `beb2ce9bce33` (`fix: parse tencent hk stock quotes`).
 - Finding:
   - Production `/api/finance/owner-stocks/summary?live=1` did call the live
     summary path, but Tencent HK quote parsing used field index `6` for
@@ -242,6 +244,25 @@ The previous full handoff was archived and should be opened only when old proven
   - live local provider probes returned:
     `0700.HK = 447.4` in 70-143 ms, `TSLA = 404.07` in 59 ms, and
     `CNY=X = 6.7557` in 222 ms.
+- Production deployment:
+  - Command:
+    `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-tencent-hk-quote-parse-20260617 --execute --json`.
+  - Backup:
+    `/Users/hermes-host/HermesMobile/backups/deploy/20260616T165550Z-plugin-finance-finance-tencent-hk-quote-parse-20260617`.
+  - Restarted launchd label: `com.hermesmobile.plugin.finance`; deploy
+    validation returned `codexIssueCount: 0`.
+  - Production provider smoke after restart:
+    - `fetchFrankfurterFx("HKD=X")` returned `7.8334` in 101-353 ms;
+    - aggregate provider returned `HKD=X` in 61-105 ms;
+    - `/api/finance/owner-stocks/summary?live=1` succeeded three consecutive
+      times.
+  - Production stock summary rows after fix:
+    - `腾讯控股` and `腾讯港股通`: `current_price_minor=44740`,
+      `fx_to_base_ppm=7833200`;
+    - `贵州茅台`: `current_price_minor=125567`,
+      `fx_to_base_ppm=6755700`;
+    - `特斯拉`: `current_price_minor=40386`,
+      `fx_to_base_ppm=1000000`.
 
 ## 2026-06-13 Stock Position Current Price Visibility Fix
 
