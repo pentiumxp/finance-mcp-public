@@ -267,8 +267,9 @@ The previous full handoff was archived and should be opened only when old proven
 
 ## 2026-06-16 Recurring Rule Dark-Mode Contrast Fix
 
-- Status: local fix validated; production deploy not run because this turn did
-  not include an explicit deploy request.
+- Status: committed, pushed to origin/public `main`, and deployed to Mac
+  production.
+- Commit: `794c1839c675` (`fix: improve recurring form dark contrast`).
 - User-visible behavior:
   - The 周期账新增 full-screen form now uses theme-aware recurring-rule surface
     variables instead of hard-coded white fields.
@@ -306,6 +307,22 @@ The previous full handoff was archived and should be opened only when old proven
     in this Finance repo; the local equivalent `npm run check` passed.
   - Test evidence ledger record:
     `evidence-de3c76af-64a5-4134-872e-61d87305050c`.
+  - Deploy evidence ledger record:
+    `evidence-6188495f-2407-4c36-9f93-3551310ef5ec`.
+- Production deploy:
+  - Command:
+    `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-recurring-dark-contrast-20260616 --execute --json`.
+  - Backup:
+    `/Users/hermes-host/HermesMobile/backups/deploy/20260616T044031Z-plugin-finance-finance-recurring-dark-contrast-20260616`.
+  - Restarted launchd label: `com.hermesmobile.plugin.finance`.
+  - Production smoke passed:
+    `/finance.html` references `finance-replica-20260616a`,
+    `/styles.css` contains the recurring Dark-mode contrast variables,
+    `/service-worker.js` contains `finance-mcp-pwa-v141`, plugin manifest entry
+    contains `finance-replica-20260616a`, and `/api/finance/overview` returned
+    HTTP `200`.
+  - Deploy validation returned `codexIssueCount: 0`; profile audit retained
+    non-Codex issues outside this Finance deploy.
 
 ## 2026-06-12 Transaction Row Wacai Date-Time Fix
 
