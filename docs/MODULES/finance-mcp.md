@@ -621,6 +621,11 @@ parallel so one slow quote does not multiply by the number of holdings.
   44px-or-taller controls; it must not stretch into a full-page panel with a
   large blank spacer.
 - Entry note/date/choice sheets are included in overlay/back-state and delayed client-refresh protection, so static asset polling cannot reload the page while a bookkeeping sheet is active.
+- Embedded and standalone startup keeps the shell in a hidden `finance-booting`
+  state until the first `summary_only=1` overview response is rendered and any
+  startup route/draft navigation has completed. This avoids showing an
+  intermediate or stale page before the homepage/final route appears; failures
+  must also release the boot state before displaying the bounded error.
 - The bookkeeping create form persists a local unsaved draft in browser
   `localStorage`, scoped by ledger and standalone/embedded mode. The draft
   includes type, amount, category, account, target account, member, tags, note,

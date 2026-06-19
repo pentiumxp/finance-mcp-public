@@ -95,6 +95,7 @@
     entryDraftDirty: false,
     entryDraftRestoredAt: 0,
     entryDraftRestoredClean: false,
+    startupRevealPending: true,
   };
 
   const REPORT_DIMENSIONS = {
@@ -1427,6 +1428,13 @@
     if (view === "assets") refreshOwnerAssetsLive();
     if (view === "stocks") refreshOwnerStocksLive();
     if (view === ROOT_VIEW) applyPendingClientReload();
+  }
+
+  function revealStartupShell() {
+    if (!state.startupRevealPending) return;
+    state.startupRevealPending = false;
+    document.body.classList.remove("finance-booting");
+    document.body.removeAttribute("data-finance-booting");
   }
 
   async function refreshOwnerAssetsLive() {
@@ -3929,6 +3937,7 @@
       const payload = await api(`/api/finance/overview?${queryString({ limit: TRANSACTION_PAGE_SIZE, currency: state.reportCurrency, summary_only: 1 })}`);
       renderOverview(payload);
       await applyStartupNavigation();
+      revealStartupShell();
     } catch (err) {
       if (state.activeLedgerId && /finance_ledger_(not_found|access_denied)/.test(err.message || "")) {
         localStorage.removeItem("financeActiveLedgerId");
@@ -3936,6 +3945,7 @@
         const payload = await api(`/api/finance/overview?${queryString({ limit: TRANSACTION_PAGE_SIZE, summary_only: 1 })}`);
         renderOverview(payload);
         await applyStartupNavigation();
+        revealStartupShell();
         return;
       }
       throw err;
@@ -4700,7 +4710,10 @@
   applyPluginFontSize(initialPluginFontSize());
   setView(ROOT_VIEW);
   registerServiceWorker();
-  loadOverview().catch(showError);
+  loadOverview().catch((err) => {
+    revealStartupShell();
+    showError(err);
+  });
   checkClientVersion().catch(() => {});
   setInterval(() => checkClientVersion().catch(() => {}), 30000);
   setInterval(() => scheduleUiProbe("interval"), 15000);

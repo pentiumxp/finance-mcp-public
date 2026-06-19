@@ -246,6 +246,11 @@ body.finance-embed {
   min-height: 100%;
 }
 
+body.finance-booting .finance-shell,
+body.finance-booting .finance-bottom-nav {
+  visibility: hidden;
+}
+
 button,
 input,
 select {

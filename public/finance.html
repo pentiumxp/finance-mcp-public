@@ -36,6 +36,10 @@
     .finance-shell {
       background: inherit;
     }
+    body.finance-booting .finance-shell,
+    body.finance-booting .finance-bottom-nav {
+      visibility: hidden;
+    }
   </style>
   <script>
     (function () {
@@ -55,7 +59,7 @@
   <link rel="apple-touch-icon" href="/icons/finance-icon-192.png">
   <link rel="stylesheet" href="/styles.css?v=finance-replica-20260616c">
 </head>
-<body>
+<body class="finance-booting" data-finance-booting="true">
   <main class="finance-shell">
     <header class="finance-topbar">
       <button class="finance-icon-button" type="button" data-topbar-left data-open-settings aria-label="设置">

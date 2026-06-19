@@ -180,6 +180,19 @@ The previous full handoff was archived and should be opened only when old proven
   service-boundary test proving a snake_case `occurred_at` PATCH replaces the
   stored transaction date.
 
+## 2026-06-19 - First-screen startup flicker guard
+
+- User-reported issue: Finance can briefly show another page before the homepage
+  data appears during fast first loads in the embedded WebKit plugin.
+- Fix: `finance.html` starts with `body.finance-booting`, and inline/external
+  CSS hides the shell and bottom nav until `loadOverview()` renders the first
+  `summary_only=1` payload and startup route/draft navigation completes.
+- Failure path: the `loadOverview()` catch path releases `finance-booting`
+  before showing the bounded error so the page does not stay blank.
+- Regression coverage: `tests/app-finance-ui.test.js` asserts the booting
+  markup/CSS and the `renderOverview -> applyStartupNavigation ->
+  revealStartupShell` order.
+
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

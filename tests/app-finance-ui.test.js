@@ -23,6 +23,7 @@ test("standalone finance UI keeps mobile navigation and settings", () => {
   const html = fs.readFileSync(path.join(root, "public", "finance.html"), "utf8");
   const js = fs.readFileSync(path.join(root, "public", "app-finance-ui.js"), "utf8");
   assert.match(html, /data-theme="dark"/);
+  assert.match(html, /<body class="finance-booting" data-finance-booting="true">/);
   assert.match(html, /user-scalable=no/);
   assert.match(html, /maximum-scale=1/);
   assert.match(html, /class="finance-bottom-nav"/);
@@ -195,6 +196,7 @@ test("finance CSS follows Wacai replica baseline without disallowed patterns", (
   assert.match(css, /html\.finance-overlay-open,[\s\S]*body\.finance-overlay-open\s*{[\s\S]*touch-action:\s*none/);
   assert.match(css, /html,\s*[\r\n]+body\s*{[\s\S]*overscroll-behavior-x:\s*none/);
   assert.match(css, /body\s*{[\s\S]*touch-action:\s*pan-y/);
+  assert.match(css, /body\.finance-booting \.finance-shell,\s*[\r\n]+body\.finance-booting \.finance-bottom-nav\s*{[\s\S]*visibility:\s*hidden/);
   assert.match(css, /body\[data-finance-view="entry"\]\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /html\.finance-entry-open\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /html\.finance-input-focus \.finance-bottom-nav,[\s\S]*html\.finance-input-focus body\.finance-embed::after\s*{[\s\S]*display:\s*none/);
@@ -490,6 +492,12 @@ test("report page renders Wacai-like statistics and client auto refresh", () => 
   assert.match(js, /limit:\s*TRANSACTION_PAGE_SIZE/);
   assert.match(js, /renderOverview\(payload\)/);
   assert.match(js, /async function loadOverview\(\)[\s\S]*summary_only:\s*1/);
+  assert.match(js, /startupRevealPending:\s*true/);
+  assert.match(js, /function revealStartupShell\(\)/);
+  assert.match(js, /document\.body\.classList\.remove\("finance-booting"\)/);
+  assert.match(js, /document\.body\.removeAttribute\("data-finance-booting"\)/);
+  assert.match(js, /renderOverview\(payload\);[\s\S]*await applyStartupNavigation\(\);[\s\S]*revealStartupShell\(\);/);
+  assert.match(js, /loadOverview\(\)\.catch\(\(err\) => \{[\s\S]*revealStartupShell\(\);[\s\S]*showError\(err\);[\s\S]*\}\)/);
   assert.doesNotMatch(js, /async function loadOverview\(\)[\s\S]*queryString\(\{ limit: TRANSACTION_PAGE_SIZE, currency: state\.reportCurrency \}\)/);
   assert.match(js, /if \(view === "assets"\) refreshOwnerAssetsLive\(\)/);
   assert.match(js, /async function refreshOwnerAssetsLive\(\)/);
