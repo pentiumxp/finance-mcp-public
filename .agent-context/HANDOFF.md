@@ -194,6 +194,20 @@ The previous full handoff was archived and should be opened only when old proven
   revealStartupShell` order.
 - Deploy version bump for this fix: static frontend `finance-replica-20260619a`,
   service worker `finance-mcp-pwa-v144`.
+- Production deploy completed from source commit `c3987052a801` using the
+  central Home AI macOS deployer with reason
+  `finance-startup-booting-guard-20260619`.
+- Backup:
+  `/Users/hermes-host/HermesMobile/backups/deploy/20260619T133215Z-plugin-finance-finance-startup-booting-guard-20260619`.
+- Restarted launchd label: `com.hermesmobile.plugin.finance`.
+- Production smoke passed: `/finance.html` contains
+  `finance-replica-20260619a` and `body.finance-booting`,
+  `/service-worker.js` contains `finance-mcp-pwa-v144`,
+  `/app-finance-ui.js?v=finance-replica-20260619a` contains
+  `revealStartupShell`, `/styles.css` contains `finance-booting`, and
+  `/api/finance/overview` returned HTTP `200`.
+- Deploy validation returned `codexIssueCount: 0`; profile audit retained
+  non-Codex issues outside this Finance deploy.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
