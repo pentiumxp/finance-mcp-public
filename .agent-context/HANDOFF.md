@@ -192,6 +192,8 @@ The previous full handoff was archived and should be opened only when old proven
 - Regression coverage: `tests/app-finance-ui.test.js` asserts the booting
   markup/CSS and the `renderOverview -> applyStartupNavigation ->
   revealStartupShell` order.
+- Deploy version bump for this fix: static frontend `finance-replica-20260619a`,
+  service worker `finance-mcp-pwa-v144`.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
