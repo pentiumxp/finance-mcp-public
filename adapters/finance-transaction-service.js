@@ -93,6 +93,10 @@ function resolveScopedId({ rows, explicitId, hint, fallback = "", errorCode }) {
   return findByHint(rows, hint, fallback);
 }
 
+function hasOwn(object, key) {
+  return Object.prototype.hasOwnProperty.call(object, key);
+}
+
 function publicTransaction(row, money = {}) {
   if (!row) return null;
   const currency = row.currency || "CNY";
@@ -266,13 +270,15 @@ function createFinanceTransactionService({ repository, clock = nowIso, idGenerat
 
   function updateTransaction(transactionId, patch = {}, context = {}) {
     requireWrite(context);
-    const shouldReplaceTags = Object.prototype.hasOwnProperty.call(patch, "tags");
+    const shouldReplaceTags = hasOwn(patch, "tags");
     return repository.transaction(() => {
       const before = repository.getTransaction(transactionId);
       if (!before) throw new Error("transaction_not_found");
       assertLedgerAccess(before.ledgerId, context);
       if (before.status !== "active") throw new Error("transaction_not_active");
       const merged = { ...before, ...patch, ledgerId: before.ledgerId };
+      if (hasOwn(patch, "occurred_at")) merged.occurredAt = patch.occurred_at;
+      if (hasOwn(patch, "occurredAt")) merged.occurredAt = patch.occurredAt;
       if (patch.amount !== undefined && patch.amountMinor === undefined && patch.amount_minor === undefined) {
         delete merged.amountMinor;
         delete merged.amount_minor;

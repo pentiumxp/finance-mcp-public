@@ -41,13 +41,18 @@ The entrypoint should only keep glue:
 
 For each workspace, prefer explicit, testable guardrails:
 
-- maximum line budget for the large entrypoint;
 - maximum top-level function/class budget if useful;
 - assertions that new services and route modules export stable factories;
 - assertions that entrypoint code delegates to services;
+- assertions that entrypoint/controller code does not regain forbidden ownership
+  over business workflows, persistence policy, Gateway lifecycle, permission
+  policy, model prompt construction, or plugin-specific logic;
 - repository docs that state the boundary.
 
-Line budgets should ratchet downward after successful extraction. They are ceilings, not targets.
+Do not use physical line-count ceilings as architecture gates. Line counts are
+diagnostic metadata only; they should not cause CI failures or motivate
+compressing blank lines, comments, or readable helper functions into dense
+single-line code.
 
 ## Review Checklist
 

@@ -648,7 +648,7 @@ parallel so one slow quote does not multiply by the number of holdings.
 - 交易列表：带图片附件的账目行显示图片标识；交易投影包含 bounded `attachmentCount`、`imageAttachmentCount`、`firstImageAttachmentId`、`firstImageUrl`。
 - 账单搜索入口：点击首页搜索按钮后进入全部账单页，并把默认焦点放在搜索输入框；PWA/iOS 场景允许一次即时聚焦和短延迟重试，避免页面切换后焦点丢失。搜索框提交搜索后必须 `blur()`，收起移动端原生输入法，避免遮挡结果列表。
 - 交易公开投影：`listTransactions()`、创建/重复创建、更新、作废返回值必须使用同一套带 JOIN 的交易投影，包含 `categoryName`、`categoryIcon`、`parentCategoryName`、`parentCategoryIcon`、`accountName`、`targetAccountName`、`memberName`、`merchantName`、`tags` 和附件计数字段。交易详情页必须把 `tags` 完整列出来；不得用裸 `finance_transactions` 行作为展示源，否则刚记账或复制后的详情会把已选择的类别、账户、成员、标签、商家显示成未记录。
-- 交易更新：`updateTransaction()` 合并既有交易行时必须识别 `bookedByMemberId` / `booked_by_member_id`，未显式传入成员时保留现有记账成员；未显式传入 `tags` 时保留现有标签，只有显式 `tags` 补丁才替换标签。
+- 交易更新：`updateTransaction()` 合并既有交易行时必须识别 `bookedByMemberId` / `booked_by_member_id`，未显式传入成员时保留现有记账成员；未显式传入 `tags` 时保留现有标签，只有显式 `tags` 补丁才替换标签。UI/MCP PATCH 传入 `occurred_at` 时必须覆盖既有交易行的 `occurredAt`，不能因为旧行 camelCase 字段优先而丢弃日期修改。
 - 交易附件：主账务 SQLite 只保存附件元数据和账目关联；原始附件 Blob 保存在独立 `finance-images.sqlite3`，用于和账务库按 `attachment_id` 对齐备份。服务启动时会把尚未入库的历史附件文件补写到图片 SQLite。缩略图是可再生成的派生文件，只保存 `thumbnail_ref` 元数据，不写入图片 SQLite。
 - 交易详情二级页：提供编辑、复制、删除入口；编辑复用记账页并调用 update，复制复用记账页并创建新交易，删除走软删除/作废确认。
 - 交易详情二级页：通过 `/api/finance/transactions/:id/attachments` 加载附件，图片附件显示缩略图，点击缩略图打开大图预览；非图片附件显示结构化文件链接。详情页也必须提供 `添加` 附件入口，复用拍照、上传照片和上传文件 action sheet，选择文件后直接调用 `POST /api/finance/attachments` 绑定当前交易并刷新附件列表。

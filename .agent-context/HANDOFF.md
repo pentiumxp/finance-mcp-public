@@ -20,6 +20,20 @@ The previous full handoff was archived and should be opened only when old proven
 - Keep future handoff updates concise: current state, changed files, validation, risks, and next steps.
 - Do not store raw secrets, tokens, one-time approvals, hidden UI state, long logs, or bulky generated output.
 
+## 2026-06-17 Hermes Constraint Snapshot Stops Recommending Line Budgets
+
+- Status: local documentation snapshot change only; not committed, pushed, or
+  deployed from this turn.
+- User-level platform direction: plugin architecture gates should not use
+  physical line counts as hard limits because that encourages blank-line removal
+  and one-line helper compression without improving structure.
+- Changed:
+  - `docs/hermes-mobile-constraints/source/skills/service-first-architecture.md`
+    now says line counts are diagnostic metadata only and recommends structural
+    ownership checks instead of maximum entrypoint line budgets.
+- Validation:
+  - `git diff --check` passed.
+
 ## 2026-06-11 Local Bookkeeping Draft Restore
 
 - Status: committed and deployed to Mac production.
@@ -151,6 +165,20 @@ The previous full handoff was archived and should be opened only when old proven
     `/api/finance/overview` returned HTTP `200`.
   - Deploy validation returned `codexIssueCount: 0`; profile audit retained
     non-Codex issues outside this Finance deploy.
+
+## 2026-06-18 - Transaction edit date PATCH fix
+
+- User-reported issue: editing a bill date in the bookkeeping UI and saving did
+  not persist the new date.
+- Root cause: `updateTransaction()` merged the existing repository row with the
+  PATCH body, then `resolveInput()` preferred the existing camelCase
+  `occurredAt` over the UI-submitted snake_case `occurred_at`. The PATCH value
+  was therefore ignored.
+- Fix: transaction update now normalizes explicit `occurred_at` / `occurredAt`
+  patches onto `merged.occurredAt` before resolving the row.
+- Regression coverage: `tests/finance-transaction-service.test.js` includes a
+  service-boundary test proving a snake_case `occurred_at` PATCH replaces the
+  stored transaction date.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 

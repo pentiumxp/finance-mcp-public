@@ -96,6 +96,28 @@ test("update accepts amount strings and reapplies account balance", () => {
   runtime.close();
 });
 
+test("update accepts snake_case occurred_at date patches", () => {
+  const runtime = createTestRuntime();
+  const created = runtime.transactionService.createTransaction({
+    type: "expense",
+    amount: "10.00",
+    occurred_at: "2026-05-10 09:30",
+    account_hint: "现金",
+    category_hint: "餐饮",
+    member_hint: "自己",
+  }, { role: "owner", actorRef: "test" });
+
+  const updated = runtime.transactionService.updateTransaction(created.transaction.id, {
+    type: "expense",
+    amount: "10.00",
+    occurred_at: "2026-05-12 19:45",
+  }, { role: "owner", actorRef: "test" });
+
+  assert.equal(updated.transaction.occurredAt, "2026-05-12 19:45");
+  assert.equal(runtime.repository.getTransaction(created.transaction.id).occurredAt, "2026-05-12 19:45");
+  runtime.close();
+});
+
 test("Wacai member and tag repair restores source-field dimensions", () => {
   const dbPath = tempDbPath("wacai-member-tag-repair");
   let runtime = createTestRuntime({ dbPath });
