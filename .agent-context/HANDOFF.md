@@ -428,6 +428,19 @@ The previous full handoff was archived and should be opened only when old proven
   `npm run check`;
   `git diff --check`.
 - AI Ops evidence: `evidence-5bcd7f60-dc12-4d99-aa7a-fe35bd21c0b9` (test).
+- Commit: `7faffd089296` (`fix: sort finance members by usage`).
+- Production deploy:
+  `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-member-usage-sort-20260620 --execute --json`.
+  Backup:
+  `/Users/hermes-host/HermesMobile/backups/deploy/20260620T143434Z-plugin-finance-finance-member-usage-sort-20260620`.
+  Deploy validation returned `codexIssueCount: 0`; profile audit retained
+  non-Codex issues outside this Finance deploy.
+- Production smoke passed: production repository contains
+  `transaction_usage_count` ordering, `/api/finance/overview?summary_only=1`
+  returned a bounded `members` array and every returned member includes
+  `transaction_usage_count`, and plugin manifest remained healthy at
+  `finance-replica-20260620f`.
+- Deploy evidence: `evidence-fc2fa14e-43d6-42ac-94fd-8da65b72ed44`.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
