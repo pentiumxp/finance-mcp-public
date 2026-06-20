@@ -537,7 +537,7 @@ Schema parity: MCP schema advertises `subcategory`, `tag`, and structured
 
 ### finance.list_members
 
-返回成员主数据。
+返回成员主数据。成员列表按同账本 active 历史交易使用次数降序排列，使用次数相同再按 active、household/name 兜底顺序排列。该排序同时服务记账页成员选择器、HTTP overview、MCP `finance.list_members` 和写账无显式成员时的默认候选。
 
 ### finance.bind_member
 
@@ -612,7 +612,7 @@ parallel so one slow quote does not multiply by the number of holdings.
 - The entry keypad's `再记` control is a save-after-stay mode toggle only. It
   must not directly submit the form or create a transaction; `保存` is the only
   direct transaction write control on the entry page.
-- Bookkeeping member and tag meta controls open visible Wacai-style choice sheets. The meta strip is a single-row horizontal scroller only; it must not vertically drag or wrap. Member selection writes back to the hidden `member_hint` field; tag selection writes a `tags` array into the transaction payload. The visible merchant entry is removed from the current bookkeeping page. `/api/finance/overview` returns tag master data for that UI selector, and list transaction projection includes bounded tag names for edit/copy prefill.
+- Bookkeeping member and tag meta controls open visible Wacai-style choice sheets. The meta strip is a single-row horizontal scroller only; it must not vertically drag or wrap. Member selection writes back to the hidden `member_hint` field; members are sorted by historical active bill usage so frequently used members appear first. Tag selection writes a `tags` array into the transaction payload. The visible merchant entry is removed from the current bookkeeping page. `/api/finance/overview` returns tag master data for that UI selector, and list transaction projection includes bounded tag names for edit/copy prefill.
 - Bill copy opens the bookkeeping form with copied amount/account/category/member/merchant/note/tags, but uses the current local date/time instead of the source transaction's `occurred_at`. Edit keeps the original `occurred_at`.
 - Bill copy opens with the source amount visible, but the first numeric keypad input after copy replaces that prefilled amount from zero instead of appending to it.
 - Note entry is not an inline form row. The meta strip shows a fixed `备注` button before the camera button; tapping it opens a bottom note input sheet. The sheet `完成` action writes back to the hidden `note` field, while cancel/back/overlay close leaves the current hidden value unchanged. This avoids resizing the bookkeeping page or hiding the custom amount keypad when notes use the native keyboard.

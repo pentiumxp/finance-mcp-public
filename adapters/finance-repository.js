@@ -1429,7 +1429,19 @@ function createFinanceRepository({ dbPath, idGenerator = defaultId, clock = nowI
   }
 
   function listMembers(ledgerId = "daily") {
-    return db.prepare("SELECT * FROM finance_members WHERE ledger_id = ? ORDER BY is_active DESC, is_household DESC, display_name").all(ledgerId);
+    return db.prepare(`
+      SELECT m.*,
+             (
+               SELECT COUNT(*)
+               FROM finance_transactions t
+               WHERE t.ledger_id = m.ledger_id
+                 AND t.status = 'active'
+                 AND (t.booked_by_member_id = m.id OR t.payer_member_id = m.id)
+             ) AS transaction_usage_count
+      FROM finance_members m
+      WHERE m.ledger_id = ?
+      ORDER BY m.is_active DESC, transaction_usage_count DESC, m.is_household DESC, m.display_name
+    `).all(ledgerId);
   }
 
   function upsertMember({ ledgerId = "daily", displayName, isHousehold = 0 }) {

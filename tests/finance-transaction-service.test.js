@@ -280,3 +280,32 @@ test("transaction list supports bounded text search for bill copy workflows", ()
   assert.equal(byDecimalAmount[0].note, "health insurance");
   runtime.close();
 });
+
+test("member list sorts by historical transaction usage", () => {
+  const runtime = createTestRuntime();
+  runtime.repository.upsertMember({ displayName: "少用成员" });
+  runtime.repository.upsertMember({ displayName: "常用成员" });
+  runtime.transactionService.createTransaction({
+    type: "expense",
+    amount: "10",
+    member_hint: "少用成员",
+    note: "rare member",
+  }, { role: "owner", actorRef: "test" });
+  for (let index = 0; index < 3; index += 1) {
+    runtime.transactionService.createTransaction({
+      type: "expense",
+      amount: "10",
+      member_hint: "常用成员",
+      note: `common member ${index}`,
+    }, { role: "owner", actorRef: "test" });
+  }
+
+  const members = runtime.repository.listMembers("daily");
+  const commonIndex = members.findIndex((row) => row.display_name === "常用成员");
+  const rareIndex = members.findIndex((row) => row.display_name === "少用成员");
+
+  assert.equal(members[commonIndex].transaction_usage_count, 3);
+  assert.equal(members[rareIndex].transaction_usage_count, 1);
+  assert.equal(commonIndex < rareIndex, true);
+  runtime.close();
+});

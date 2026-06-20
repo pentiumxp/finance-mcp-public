@@ -413,6 +413,22 @@ The previous full handoff was archived and should be opened only when old proven
   `finance-replica-20260620f`.
 - Deploy evidence: `evidence-c033489b-f85a-46bb-aee2-78143160dfaf`.
 
+## 2026-06-20 - Finance Member Picker Usage Sorting
+
+- User feedback: when selecting a bookkeeping member, members used more often in
+  historical bills should appear earlier.
+- Change in progress: `repository.listMembers()` now returns
+  `transaction_usage_count` and orders active ledger members by active historical
+  transaction usage descending, then existing household/name fallback. This feeds
+  the bookkeeping member picker through overview, MCP `finance.list_members`,
+  and service default candidate ordering.
+- Validation passed:
+  `node --check adapters/finance-repository.js && node --check tests/finance-transaction-service.test.js`;
+  `node --test tests/finance-transaction-service.test.js tests/finance-server.test.js tests/finance-mcp-server.test.js`;
+  `npm run check`;
+  `git diff --check`.
+- AI Ops evidence: `evidence-5bcd7f60-dc12-4d99-aa7a-fe35bd21c0b9` (test).
+
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac
