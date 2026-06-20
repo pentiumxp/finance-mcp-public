@@ -321,6 +321,24 @@ The previous full handoff was archived and should be opened only when old proven
   rules, and plugin manifest contains `finance-replica-20260620d`.
 - Deploy evidence: `evidence-ebe7844e-04b5-40d8-bdde-99c2cdbcab04`.
 
+## 2026-06-20 - Finance Home Summary Readability Follow-up
+
+- User feedback: compact home summary hurt readability; screenshot showed the
+  main amount truncated because the currency selector shared the first row.
+- Change in progress: move the home currency selector to the second row, keep
+  the first row for `本年支出` plus the main amount, and keep compact home
+  services unchanged.
+- Static version for this readability fix: frontend `finance-replica-20260620e`,
+  service worker `finance-mcp-pwa-v149`.
+- Validation passed:
+  `node --check public/app-finance-ui.js && node --check adapters/finance-hermes-embedded-plugin-service.js`;
+  `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js`;
+  `npm run check`;
+  `git diff --check`;
+  local Chrome mobile render with both default and long simulated amount
+  `10,997,736.00`.
+- AI Ops evidence: `evidence-0fccd2dc-4af7-46c5-a1cd-b4a1d3c94cad` (test).
+
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

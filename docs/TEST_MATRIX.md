@@ -730,8 +730,9 @@ Required coverage:
   remains through the existing home service entry and top-right search control.
 - The ledger home summary remains compact: home view gap is reduced, summary
   padding and metric spacing stay small, the home currency selector is a
-  text-width pill, and service icons use the compact home sizing so more
-  transaction rows are visible on first screen.
+  text-width pill placed on the secondary row instead of competing with the
+  main amount, and service icons use the compact home sizing so more transaction
+  rows are visible on first screen.
 - `listTransactions()`, create, idempotent duplicate create, update, and void
   responses return the public joined transaction projection rather than a raw
   `finance_transactions` row.
