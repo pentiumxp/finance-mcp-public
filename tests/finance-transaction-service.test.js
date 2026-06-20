@@ -257,13 +257,26 @@ test("transaction list supports bounded text search for bill copy workflows", ()
     amount: "12",
     note: "bus card",
   }, { role: "owner", actorRef: "test" });
+  runtime.transactionService.createTransaction({
+    type: "expense",
+    amount: "1200",
+    note: "school fee",
+  }, { role: "owner", actorRef: "test" });
+  runtime.transactionService.createTransaction({
+    type: "expense",
+    amount: "5000",
+    note: "health insurance",
+  }, { role: "owner", actorRef: "test" });
 
   const byNote = runtime.transactionService.listTransactions({ search: "copy seed", limit: 10 }, { role: "owner" });
   const byAmount = runtime.transactionService.listTransactions({ search: "1200", limit: 10 }, { role: "owner" });
+  const byDecimalAmount = runtime.transactionService.listTransactions({ search: "5,000.00", limit: 10 }, { role: "owner" });
 
   assert.equal(byNote.length, 1);
   assert.equal(byNote[0].note, "family dinner copy seed");
   assert.equal(byAmount.length, 1);
-  assert.equal(byAmount[0].note, "bus card");
+  assert.equal(byAmount[0].note, "school fee");
+  assert.equal(byDecimalAmount.length, 1);
+  assert.equal(byDecimalAmount[0].note, "health insurance");
   runtime.close();
 });

@@ -66,6 +66,25 @@ function normalizedSearch(value = "") {
   return String(value || "").trim().slice(0, 80);
 }
 
+function exactAmountSearchCandidates(search = "") {
+  const raw = normalizedSearch(search).replace(/\s+/g, "");
+  if (!raw) return [];
+  if (!/^[+-]?(?:(?:\d+)|(?:\d{1,3}(?:,\d{3})+))(?:\.\d{1,6})?$/.test(raw)) return [];
+  const unsigned = raw.replace(/^[+-]/, "").replaceAll(",", "");
+  const [wholeRaw, fractionRaw = ""] = unsigned.split(".");
+  const whole = wholeRaw.replace(/^0+(?=\d)/, "") || "0";
+  const significantFraction = fractionRaw.replace(/0+$/, "");
+  const minScale = significantFraction.length;
+  const candidates = [];
+  for (let scale = minScale; scale <= 6; scale += 1) {
+    const fraction = fractionRaw.padEnd(scale, "0").slice(0, scale);
+    const minorText = `${whole}${fraction}`.replace(/^0+(?=\d)/, "") || "0";
+    const minor = Number(minorText);
+    if (Number.isSafeInteger(minor)) candidates.push({ scale, minor });
+  }
+  return candidates;
+}
+
 function rowToTransaction(row) {
   if (!row) return null;
   return {
@@ -1650,20 +1669,25 @@ function createFinanceRepository({ dbPath, idGenerator = defaultId, clock = nowI
     applyTransactionFilters({ where, params, filters });
     const search = normalizedSearch(filters.search || filters.q);
     if (search) {
-      const pattern = `%${search.replaceAll("%", "\\%").replaceAll("_", "\\_")}%`;
-      where.push(`(
-        t.note LIKE ? ESCAPE '\\'
-        OR t.source LIKE ? ESCAPE '\\'
-        OR t.source_ref LIKE ? ESCAPE '\\'
-        OR CAST(ABS(t.amount_minor) AS TEXT) LIKE ? ESCAPE '\\'
-        OR c.name LIKE ? ESCAPE '\\'
-        OR pc.name LIKE ? ESCAPE '\\'
-        OR a.name LIKE ? ESCAPE '\\'
-        OR ta.name LIKE ? ESCAPE '\\'
-        OR m.display_name LIKE ? ESCAPE '\\'
-        OR merchant.name LIKE ? ESCAPE '\\'
-      )`);
-      params.push(pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern);
+      const amountCandidates = exactAmountSearchCandidates(search);
+      if (amountCandidates.length) {
+        where.push(`(${amountCandidates.map(() => "(t.scale = ? AND ABS(t.amount_minor) = ?)").join(" OR ")})`);
+        for (const candidate of amountCandidates) params.push(candidate.scale, candidate.minor);
+      } else {
+        const pattern = `%${search.replaceAll("%", "\\%").replaceAll("_", "\\_")}%`;
+        where.push(`(
+          t.note LIKE ? ESCAPE '\\'
+          OR t.source LIKE ? ESCAPE '\\'
+          OR t.source_ref LIKE ? ESCAPE '\\'
+          OR c.name LIKE ? ESCAPE '\\'
+          OR pc.name LIKE ? ESCAPE '\\'
+          OR a.name LIKE ? ESCAPE '\\'
+          OR ta.name LIKE ? ESCAPE '\\'
+          OR m.display_name LIKE ? ESCAPE '\\'
+          OR merchant.name LIKE ? ESCAPE '\\'
+        )`);
+        params.push(pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern);
+      }
     }
     const limit = Math.max(1, Math.min(Number(filters.limit || 50), 200));
     const offset = Math.max(0, Math.trunc(Number(filters.offset || 0)));

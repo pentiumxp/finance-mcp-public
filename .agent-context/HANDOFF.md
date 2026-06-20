@@ -384,6 +384,22 @@ The previous full handoff was archived and should be opened only when old proven
   contains `finance-replica-20260620f`.
 - Deploy evidence: `evidence-36dbb832-102b-4d28-9b82-8e3661303ae9`.
 
+## 2026-06-20 - Finance Bill Search Exact Amount Semantics
+
+- User feedback: when the bill search input is a number, Finance should treat it
+  as an exact bill amount search, matching Wacai-style behavior such as searching
+  `5000` to find `5,000.00` bills.
+- Change in progress: `repository.listTransactions()` now parses plain amount
+  search text (`5000`, `5000.00`, `5,000.00`) into exact major-unit amount
+  candidates by row scale. Numeric search no longer does a LIKE against
+  `amount_minor`, so `1200` means `1200.00`, not `12.00`.
+- Validation passed:
+  `node --check adapters/finance-repository.js && node --check tests/finance-transaction-service.test.js`;
+  `node --test tests/finance-transaction-service.test.js tests/finance-server.test.js tests/finance-mcp-server.test.js`;
+  `npm run check`;
+  `git diff --check`.
+- AI Ops evidence: `evidence-2b87ad78-7d3f-477b-b1fd-4c713b11494e` (test).
+
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

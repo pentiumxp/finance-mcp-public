@@ -475,9 +475,12 @@ Schema parity fields:
 
 List projection is paginated. UI and MCP callers default to `limit=50`; callers
 may pass `offset` to fetch the next bounded page. Report totals must not use this
-paginated reader. `search` is a bounded text filter for bill-copy workflows; it
-matches transaction note/source/ref, amount text, category/parent category,
-account/target account, member, and merchant names within the scoped ledger.
+paginated reader. `search` is a bounded filter for bill-copy workflows. If the
+search text is a plain amount such as `5000`, `5000.00`, or `5,000.00`, it
+matches exact transaction amount in major units within the scoped ledger. It must
+not match minor-unit text accidentally, so `1200` means `1200.00`, not `12.00`.
+Non-amount search text matches transaction note/source/ref, category/parent
+category, account/target account, member, and merchant names.
 
 ### finance.update_transaction
 
