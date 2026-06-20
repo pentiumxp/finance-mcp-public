@@ -235,6 +235,27 @@ The previous full handoff was archived and should be opened only when old proven
   `node --test tests/app-finance-ui.test.js`,
   Home AI `node tests/ios-pwa-live-debug-server.test.js`, and
   Home AI `node tests/ios-pwa-visual-harness.test.js`.
+- Production deploy completed from source commit `0f1af9defb14` using the
+  central Home AI macOS deployer with reason
+  `finance-embedded-keyboard-viewport-handler-20260620`.
+- Backup:
+  `/Users/hermes-host/HermesMobile/backups/deploy/20260620T010646Z-plugin-finance-finance-embedded-keyboard-viewport-handler-20260620`.
+- Restarted launchd label: `com.hermesmobile.plugin.finance`.
+- Production smoke passed: manifest entry uses `finance-replica-20260620a`,
+  `/finance.html` contains the textarea `#messageInput`, production JS exposes
+  `window.handleHermesPluginViewportMessage`, and CSS contains the embedded
+  keyboard composer rules.
+- Visual acceptance passed:
+  `npm run ios:pwa:visual -- --scenario embedded-plugin-keyboard-composer --plugin-id finance --debug-url http://127.0.0.1:19073/ --json`.
+  All assertions passed, including `plugin_composer_exists`,
+  `host_keyboard_visible_after_input_tap`,
+  `plugin_received_keyboard_viewport_state`,
+  `plugin_input_above_keyboard`, and `plugin_composer_above_keyboard`.
+  Screenshot:
+  `/Users/xuxin/.homeai-qa/artifacts/ios-pwa-visual-embedded-plugin-keyboard-composer-finance-20260620T010714Z.png`.
+- AI Ops evidence:
+  `evidence-1099b2d7-c6c7-4f91-8878-4ffe6f8068a1` (test) and
+  `evidence-1b0de602-7f57-461c-b06a-4f858ba7550c` (deploy).
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
