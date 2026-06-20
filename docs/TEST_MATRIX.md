@@ -192,8 +192,10 @@ node tests\privacy-scan.test.js
   `data-hermes-composer` must wrap a visible native textarea `#messageInput`;
   focusing it must open the host iOS keyboard, Finance must mirror viewport
   state to generic `keyboard-open`, `--app-top`, and `--app-height`, and the
-  composer/input must remain above the keyboard. Submitting text may route only
-  to the existing bill search and must not write ledger data.
+  composer/input must remain above the keyboard. Finance must also expose
+  `window.handleHermesPluginViewportMessage(data)` for the central visual
+  harness fallback path. Submitting text may route only to the existing bill
+  search and must not write ledger data.
 - Manual/MCP Owner asset upserts recalculate current-year USD annual return,
   total return multiple, and CAGR from the updated USD component and prior
   annual USD return history, while `owner_asset_xlsx` imports preserve the

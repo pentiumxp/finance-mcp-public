@@ -224,6 +224,10 @@ The previous full handoff was archived and should be opened only when old proven
 - Fix: Finance mirrors keyboard viewport state to the generic plugin contract
   expected by the Home AI visual harness: `keyboard-open`, `--app-top`, and
   `--app-height`, while keeping existing Finance-specific keyboard variables.
+- Fix: Finance exposes `window.handleHermesPluginViewportMessage(data)` so the
+  central visual harness can inject the same bounded `hermes.plugin.viewport`
+  keyboard payload used by the normal embedded message listener when the
+  Simulator does not show a real software keyboard.
 - Static version for this fix: frontend `finance-replica-20260620a`, service
   worker `finance-mcp-pwa-v145`.
 - Local validation run so far:

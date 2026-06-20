@@ -555,6 +555,9 @@ test("report page renders Wacai-like statistics and client auto refresh", () => 
   assert.match(js, /state\.hermesHostViewport = Object\.assign\(\{\}, data, \{ receivedAt: Date\.now\(\) \}\)/);
   assert.match(js, /if \(!entryNoteOverlayActive\(\)\) updateKeyboardViewportOffset\(\)/);
   assert.match(js, /scheduleUiProbe\("hermes-host-viewport"\)/);
+  assert.match(js, /function handleHermesPluginViewportMessage\(data = \{\}\)/);
+  assert.match(js, /window\.handleHermesPluginViewportMessage = handleHermesPluginViewportMessage/);
+  assert.match(js, /if \(handleHermesPluginViewportMessage\(data\)\) return/);
   assert.match(js, /function entryNoteOverlayActive\(\)/);
   assert.match(js, /overlay\.dataset\.entryNoteActive === "true"/);
   assert.match(js, /function financeViewportState\(\)/);

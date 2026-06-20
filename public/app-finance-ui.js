@@ -4685,22 +4685,28 @@
     });
   }
 
-  function handleHermesMessage(event) {
-    const data = event.data || {};
+  function handleHermesPluginViewportMessage(data = {}) {
     if (!data) return;
     if (data.type === HERMES_EVENTS.viewport) {
       if (data.pluginId && data.pluginId !== "finance") return;
       state.hermesHostViewport = Object.assign({}, data, { receivedAt: Date.now() });
       if (!entryNoteOverlayActive()) updateKeyboardViewportOffset();
       scheduleUiProbe("hermes-host-viewport");
-      return;
+      return true;
     }
+    return false;
+  }
+
+  function handleHermesMessage(event) {
+    const data = event.data || {};
+    if (handleHermesPluginViewportMessage(data)) return;
     if (data.type !== HERMES_EVENTS.back) return;
     const handled = goBack();
     postBackState(handled);
   }
 
   if (IS_HERMES_EMBED) document.body.classList.add("finance-embed");
+  window.handleHermesPluginViewportMessage = handleHermesPluginViewportMessage;
   window.addEventListener("resize", () => scheduleUiProbe("resize"));
   window.addEventListener("scroll", () => {
     maybeLoadMoreTransactions();

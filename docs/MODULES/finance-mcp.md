@@ -634,7 +634,10 @@ parallel so one slow quote does not multiply by the number of holdings.
   the existing bill search rather than writing ledger data. Finance also mirrors
   its keyboard viewport state to the generic `keyboard-open`, `--app-top`, and
   `--app-height` plugin contract while retaining the Finance-specific
-  `finance-keyboard-open` and `--finance-*` variables.
+  `finance-keyboard-open` and `--finance-*` variables. Finance exposes
+  `window.handleHermesPluginViewportMessage(data)` so the central Home AI visual
+  harness and host shell can deliver the same bounded
+  `hermes.plugin.viewport` payload used by the normal `message` listener.
 - The bookkeeping create form persists a local unsaved draft in browser
   `localStorage`, scoped by ledger and standalone/embedded mode. The draft
   includes type, amount, category, account, target account, member, tags, note,
