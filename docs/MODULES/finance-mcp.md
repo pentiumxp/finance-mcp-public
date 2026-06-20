@@ -628,7 +628,7 @@ parallel so one slow quote does not multiply by the number of holdings.
   must also release the boot state before displaying the bounded error.
 - In embedded mode, the ledger home exposes a compact plugin-owned search
   composer with `#composer`, `.composer`, `data-hermes-composer`, and a native
-  text input `#messageInput`. It exists so the Home AI
+  single-line textarea `#messageInput`. It exists so the Home AI
   `embedded-plugin-keyboard-composer` harness can tap a real Finance-owned
   input and verify iOS keyboard geometry; submitting a non-empty value routes to
   the existing bill search rather than writing ledger data. Finance also mirrors

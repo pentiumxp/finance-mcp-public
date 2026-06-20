@@ -283,8 +283,9 @@ body.finance-embed .finance-keyboard-composer {
   scroll-margin-bottom: calc(var(--finance-keyboard-bottom, 0px) + 18px);
 }
 
-.finance-keyboard-composer input {
+.finance-keyboard-composer textarea {
   width: 100%;
+  height: 42px;
   min-height: 42px;
   padding: 0 14px;
   color: var(--ink);
@@ -294,11 +295,14 @@ body.finance-embed .finance-keyboard-composer {
   outline: 0;
   font: inherit;
   font-size: 15px;
+  line-height: 42px;
+  resize: none;
+  overflow: hidden;
   -webkit-appearance: none;
   appearance: none;
 }
 
-.finance-keyboard-composer input:focus {
+.finance-keyboard-composer textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
 }

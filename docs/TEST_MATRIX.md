@@ -189,7 +189,7 @@ node tests\privacy-scan.test.js
   before showing the error message so the WebKit page does not stay blank.
 - Embedded plugin keyboard validation must find a Finance-owned composer on the
   ledger home. In `?embed=hermes` mode, `#composer` / `.composer` /
-  `data-hermes-composer` must wrap a visible native text input `#messageInput`;
+  `data-hermes-composer` must wrap a visible native textarea `#messageInput`;
   focusing it must open the host iOS keyboard, Finance must mirror viewport
   state to generic `keyboard-open`, `--app-top`, and `--app-height`, and the
   composer/input must remain above the keyboard. Submitting text may route only

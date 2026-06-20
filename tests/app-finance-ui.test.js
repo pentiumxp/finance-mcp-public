@@ -28,7 +28,7 @@ test("standalone finance UI keeps mobile navigation and settings", () => {
   assert.match(html, /maximum-scale=1/);
   assert.match(html, /class="finance-bottom-nav"/);
   assert.match(html, /class="finance-keyboard-composer composer" id="composer" data-hermes-composer data-finance-keyboard-composer/);
-  assert.match(html, /id="messageInput" type="search"[\s\S]*data-finance-keyboard-composer-input/);
+  assert.match(html, /<textarea id="messageInput" rows="1"[\s\S]*data-finance-keyboard-composer-input><\/textarea>/);
   assert.equal((html.match(/data-nav-view=/g) || []).length, 7);
   for (const label of ["账本", "计划", "记账", "报表", "资产", "股票", "我的"]) assert.match(html, new RegExp(`>${label}<`));
   assert.match(html, /data-nav-view="assets" data-owner-assets-nav hidden/);
@@ -202,7 +202,7 @@ test("finance CSS follows Wacai replica baseline without disallowed patterns", (
   assert.match(css, /\.finance-keyboard-composer\s*{[\s\S]*display:\s*none/);
   assert.match(css, /body\.finance-embed \.finance-keyboard-composer\s*{[\s\S]*display:\s*block/);
   assert.match(css, /body\.finance-embed \.finance-keyboard-composer\s*{[\s\S]*scroll-margin-bottom:\s*calc\(var\(--finance-keyboard-bottom,\s*0px\) \+ 18px\)/);
-  assert.match(css, /\.finance-keyboard-composer input\s*{[\s\S]*min-height:\s*42px/);
+  assert.match(css, /\.finance-keyboard-composer textarea\s*{[\s\S]*min-height:\s*42px/);
   assert.match(css, /body\[data-finance-view="entry"\]\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /html\.finance-entry-open\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /html\.finance-input-focus \.finance-bottom-nav,[\s\S]*html\.finance-input-focus body\.finance-embed::after\s*{[\s\S]*display:\s*none/);

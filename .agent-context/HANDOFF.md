@@ -219,8 +219,8 @@ The previous full handoff was archived and should be opened only when old proven
   were not readable by this development user.
 - Fix: Finance embedded ledger home now exposes a real plugin-owned compact
   search composer with `#composer`, `.composer`, `data-hermes-composer`, and a
-  visible native search input `#messageInput`. Non-empty submission routes into
-  existing bill search only; it does not write ledger data.
+  visible native single-line textarea `#messageInput`. Non-empty submission
+  routes into existing bill search only; it does not write ledger data.
 - Fix: Finance mirrors keyboard viewport state to the generic plugin contract
   expected by the Home AI visual harness: `keyboard-open`, `--app-top`, and
   `--app-height`, while keeping existing Finance-specific keyboard variables.
