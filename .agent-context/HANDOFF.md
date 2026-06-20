@@ -269,6 +269,24 @@ The previous full handoff was archived and should be opened only when old proven
   page no longer shows the `最近明细` title or `全部` prompt above the list.
 - Static version for this layout fix: frontend `finance-replica-20260620c`,
   service worker `finance-mcp-pwa-v147`.
+- Follow-up commit: `6a1a10e3ad9d` (`fix: remove finance home transaction
+  prompts`).
+- Validation passed:
+  `node --check public/app-finance-ui.js && node --check adapters/finance-hermes-embedded-plugin-service.js`;
+  `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js`;
+  `npm run check`;
+  `git diff --check`;
+  production smoke for `/finance.html`, `/service-worker.js`, and plugin
+  manifest.
+- Production deploy:
+  `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-remove-home-transaction-prompts-20260620 --execute --json`.
+  Backup:
+  `/Users/hermes-host/HermesMobile/backups/deploy/20260620T034901Z-plugin-finance-finance-remove-home-transaction-prompts-20260620`.
+  Deploy validation returned `codexIssueCount: 0`; profile audit retained
+  non-Codex issues outside this Finance deploy.
+- AI Ops evidence:
+  `evidence-662ad0a6-e47b-4c93-87b9-98aafd9aaafd` (test) and
+  `evidence-4840f082-9d6d-4358-a6c8-0f36e89c015a` (deploy).
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
