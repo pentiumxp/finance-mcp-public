@@ -288,6 +288,28 @@ The previous full handoff was archived and should be opened only when old proven
   `evidence-662ad0a6-e47b-4c93-87b9-98aafd9aaafd` (test) and
   `evidence-4840f082-9d6d-4358-a6c8-0f36e89c015a` (deploy).
 
+## 2026-06-20 - Compact Finance Home Vertical Density
+
+- User feedback: the home page should show as many transaction rows as possible;
+  the top-right currency selector was too wide, and the `本年支出` summary area
+  consumed too much vertical space.
+- Change in progress: compress home-only vertical spacing by shrinking the
+  summary card padding, summary row gaps, home currency pill, home services
+  height, and service icon size. Keep the right search entry and transaction
+  list behavior unchanged.
+- Static version for this density fix: frontend `finance-replica-20260620d`,
+  service worker `finance-mcp-pwa-v148`.
+- Validation passed:
+  `node --check public/app-finance-ui.js && node --check adapters/finance-hermes-embedded-plugin-service.js`;
+  `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js`;
+  `npm run check`;
+  `git diff --check`;
+  local Chrome mobile render at `402x714`.
+- Render metrics: summary height `111px -> 77px`, home services height
+  `75px -> 66px`, recent transaction panel top `264px -> 221px`.
+- AI Ops evidence: `evidence-e34cc446-823b-4bdc-8b0e-3ccc5288ce4c` (test).
+- Deployment: not run in this step; no current-thread deploy request.
+
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

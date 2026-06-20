@@ -728,6 +728,10 @@ Required coverage:
 - The ledger home page does not render a separate bill-search row or a
   `最近明细` / `全部` header above the recent transaction list; all-bills access
   remains through the existing home service entry and top-right search control.
+- The ledger home summary remains compact: home view gap is reduced, summary
+  padding and metric spacing stay small, the home currency selector is a
+  text-width pill, and service icons use the compact home sizing so more
+  transaction rows are visible on first screen.
 - `listTransactions()`, create, idempotent duplicate create, update, and void
   responses return the public joined transaction projection rather than a raw
   `finance_transactions` row.

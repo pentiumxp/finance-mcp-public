@@ -201,7 +201,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v147",
+      serviceWorker: "finance-mcp-pwa-v148",
     };
   }
 

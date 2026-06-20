@@ -769,6 +769,16 @@ test("report page renders Wacai-like statistics and client auto refresh", () => 
   assert.match(css, /\.finance-report-filter-top\s*{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\) 92px/);
   assert.match(css, /\.wacai-period-tabs\s*{[\s\S]*width:\s*100%/);
   assert.match(css, /\.finance-report-currency-button\s*{[\s\S]*min-height:\s*42px/);
+  assert.match(css, /\.finance-view\[data-view="home"\]\.active\s*{[\s\S]*gap:\s*10px/);
+  assert.match(css, /\.finance-summary\s*{[\s\S]*grid-template-areas:[\s\S]*"label amount currency"/);
+  assert.match(css, /\.finance-summary\s*{[\s\S]*padding:\s*10px 12px 9px/);
+  assert.match(css, /\.finance-summary-top\s*{[\s\S]*display:\s*contents/);
+  assert.match(css, /\.finance-summary-currency-button\s*{[\s\S]*min-height:\s*28px/);
+  assert.match(css, /\.finance-summary-amount\s*{[\s\S]*font-size:\s*27px/);
+  assert.match(css, /\.finance-summary-row\s*{[\s\S]*margin-top:\s*0/);
+  assert.match(css, /\.finance-home-services button\s*{[\s\S]*min-height:\s*56px/);
+  assert.match(css, /\.finance-home-services button\s*{[\s\S]*gap:\s*4px/);
+  assert.match(css, /\.finance-home-services \.finance-service-icon\s*{[\s\S]*width:\s*32px/);
   assert.match(css, /\.finance-summary-currency-button::after,[\s\S]*\.finance-report-currency-button::after/);
   assert.match(css, /\.wacai-report-filter\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /\.wacai-date-range\s*{[\s\S]*display:\s*grid/);
@@ -813,11 +823,11 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260620c/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260620c/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260620d/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260620d/);
   assert.doesNotMatch(html, /<h2>最近明细<\/h2>/);
   assert.doesNotMatch(html, /<header class="finance-section-header">\s*<h2>最近明细<\/h2>\s*<button type="button" data-switch-view="transactions">全部<\/button>/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v147/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v148/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -860,7 +870,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v147"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v148"/);
   assert.match(js, /lastKeypadHandledAt:\s*0/);
   assert.match(js, /lastKeypadHandledKey:\s*""/);
   assert.match(js, /lastKeypadHandledType:\s*""/);
