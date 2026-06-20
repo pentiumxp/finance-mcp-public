@@ -338,6 +338,18 @@ The previous full handoff was archived and should be opened only when old proven
   local Chrome mobile render with both default and long simulated amount
   `10,997,736.00`.
 - AI Ops evidence: `evidence-0fccd2dc-4af7-46c5-a1cd-b4a1d3c94cad` (test).
+- Commit: `02fa5b6c69ff` (`fix: keep finance home summary readable`).
+- Production deploy:
+  `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-home-summary-readability-20260620 --execute --json`.
+  Backup:
+  `/Users/hermes-host/HermesMobile/backups/deploy/20260620T041311Z-plugin-finance-finance-home-summary-readability-20260620`.
+  Deploy validation returned `codexIssueCount: 0`; profile audit retained
+  non-Codex issues outside this Finance deploy.
+- Production smoke passed: `/finance.html` contains
+  `finance-replica-20260620e`, `/service-worker.js` contains
+  `finance-mcp-pwa-v149`, `/styles.css` contains `label amount amount` /
+  `row row currency`, and plugin manifest contains `finance-replica-20260620e`.
+- Deploy evidence: `evidence-f22f45ea-dc81-479e-aae4-638be9ebaea4`.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
