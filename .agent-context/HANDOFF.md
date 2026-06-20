@@ -308,7 +308,18 @@ The previous full handoff was archived and should be opened only when old proven
 - Render metrics: summary height `111px -> 77px`, home services height
   `75px -> 66px`, recent transaction panel top `264px -> 221px`.
 - AI Ops evidence: `evidence-e34cc446-823b-4bdc-8b0e-3ccc5288ce4c` (test).
-- Deployment: not run in this step; no current-thread deploy request.
+- Commit: `c5d35e1dbee2` (`fix: compact finance home summary`).
+- Production deploy:
+  `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-compact-home-summary-20260620 --execute --json`.
+  Backup:
+  `/Users/hermes-host/HermesMobile/backups/deploy/20260620T040329Z-plugin-finance-finance-compact-home-summary-20260620`.
+  Deploy validation returned `codexIssueCount: 0`; profile audit retained
+  non-Codex issues outside this Finance deploy.
+- Production smoke passed: `/finance.html` contains
+  `finance-replica-20260620d`, `/service-worker.js` contains
+  `finance-mcp-pwa-v148`, `/styles.css` contains compact home summary/service
+  rules, and plugin manifest contains `finance-replica-20260620d`.
+- Deploy evidence: `evidence-ebe7844e-04b5-40d8-bdde-99c2cdbcab04`.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
