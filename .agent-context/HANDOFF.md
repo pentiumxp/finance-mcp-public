@@ -351,6 +351,26 @@ The previous full handoff was archived and should be opened only when old proven
   `row row currency`, and plugin manifest contains `finance-replica-20260620e`.
 - Deploy evidence: `evidence-f22f45ea-dc81-479e-aae4-638be9ebaea4`.
 
+## 2026-06-20 - Finance Home Currency Topbar Placement
+
+- User feedback: the second-row currency selector placement still felt wrong;
+  it should move to the top-left and correspond visually with the top-right
+  search button.
+- Change in progress: move `data-home-currency-button` from the summary card to
+  the topbar left slot, keep the search composer in the topbar right slot, and
+  use symmetric topbar side columns so the ledger title stays centered.
+- Static version for this placement fix: frontend `finance-replica-20260620f`,
+  service worker `finance-mcp-pwa-v150`.
+- Validation passed:
+  `node --check public/app-finance-ui.js && node --check adapters/finance-hermes-embedded-plugin-service.js`;
+  `node --test tests/app-finance-ui.test.js tests/finance-hermes-embedded-plugin-service.test.js`;
+  `npm run check`;
+  `git diff --check`;
+  local Chrome mobile render with long simulated amount. Render metrics:
+  title center offset `0`, no currency/title overlap, no search/title overlap,
+  summary has no currency button, and long amount was not clipped.
+- AI Ops evidence: `evidence-46065e84-820e-4076-be90-a771657b82fb` (test).
+
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

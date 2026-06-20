@@ -57,14 +57,12 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/finance-icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icons/finance-icon-192.png">
-  <link rel="stylesheet" href="/styles.css?v=finance-replica-20260620e">
+  <link rel="stylesheet" href="/styles.css?v=finance-replica-20260620f">
 </head>
 <body class="finance-booting" data-finance-booting="true">
   <main class="finance-shell">
     <header class="finance-topbar">
-      <button class="finance-icon-button" type="button" data-topbar-left data-open-settings aria-label="设置">
-        <span class="finance-glyph finance-glyph-settings"></span>
-      </button>
+      <button class="finance-summary-currency-button finance-topbar-currency-button" type="button" data-topbar-left data-home-currency-button aria-label="切换币种">人民币</button>
       <button class="finance-ledger-switch" type="button" data-open-ledger aria-label="切换账本">
         <div class="finance-title" data-ledger-name>日常账本</div>
         <div class="finance-subtitle" data-ledger-status></div>
@@ -81,7 +79,6 @@
       <section class="finance-summary">
         <div class="finance-summary-top">
           <div class="finance-summary-meta" data-summary-label>本年支出</div>
-          <button class="finance-summary-currency-button" type="button" data-home-currency-button aria-label="切换币种">人民币</button>
         </div>
         <div class="finance-summary-amount" data-summary-expense>0</div>
         <div class="finance-summary-row">
@@ -448,6 +445,6 @@
   <div class="finance-overlay hidden" data-entry-note-overlay></div>
   <div class="finance-overlay hidden" data-entry-date-overlay></div>
   <div class="finance-overlay hidden" data-recurring-overlay></div>
-  <script src="/app-finance-ui.js?v=finance-replica-20260620e"></script>
+  <script src="/app-finance-ui.js?v=finance-replica-20260620f"></script>
 </body>
 </html>
