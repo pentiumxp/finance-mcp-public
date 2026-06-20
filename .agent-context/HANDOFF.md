@@ -370,6 +370,19 @@ The previous full handoff was archived and should be opened only when old proven
   title center offset `0`, no currency/title overlap, no search/title overlap,
   summary has no currency button, and long amount was not clipped.
 - AI Ops evidence: `evidence-46065e84-820e-4076-be90-a771657b82fb` (test).
+- Commit: `828f56fa21aa` (`fix: move finance currency selector to topbar`).
+- Production deploy:
+  `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-currency-topbar-placement-20260620 --execute --json`.
+  Backup:
+  `/Users/hermes-host/HermesMobile/backups/deploy/20260620T042509Z-plugin-finance-finance-currency-topbar-placement-20260620`.
+  Deploy validation returned `codexIssueCount: 0`; profile audit retained
+  non-Codex issues outside this Finance deploy.
+- Production smoke passed: `/finance.html` contains
+  `finance-replica-20260620f` and `finance-topbar-currency-button`,
+  `/service-worker.js` contains `finance-mcp-pwa-v150`, `/styles.css` contains
+  symmetric topbar columns and topbar currency rules, and plugin manifest
+  contains `finance-replica-20260620f`.
+- Deploy evidence: `evidence-36dbb832-102b-4d28-9b82-8e3661303ae9`.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
