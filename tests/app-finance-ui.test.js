@@ -27,6 +27,8 @@ test("standalone finance UI keeps mobile navigation and settings", () => {
   assert.match(html, /user-scalable=no/);
   assert.match(html, /maximum-scale=1/);
   assert.match(html, /class="finance-bottom-nav"/);
+  assert.match(html, /class="finance-keyboard-composer composer" id="composer" data-hermes-composer data-finance-keyboard-composer/);
+  assert.match(html, /id="messageInput" type="search"[\s\S]*data-finance-keyboard-composer-input/);
   assert.equal((html.match(/data-nav-view=/g) || []).length, 7);
   for (const label of ["账本", "计划", "记账", "报表", "资产", "股票", "我的"]) assert.match(html, new RegExp(`>${label}<`));
   assert.match(html, /data-nav-view="assets" data-owner-assets-nav hidden/);
@@ -197,6 +199,10 @@ test("finance CSS follows Wacai replica baseline without disallowed patterns", (
   assert.match(css, /html,\s*[\r\n]+body\s*{[\s\S]*overscroll-behavior-x:\s*none/);
   assert.match(css, /body\s*{[\s\S]*touch-action:\s*pan-y/);
   assert.match(css, /body\.finance-booting \.finance-shell,\s*[\r\n]+body\.finance-booting \.finance-bottom-nav\s*{[\s\S]*visibility:\s*hidden/);
+  assert.match(css, /\.finance-keyboard-composer\s*{[\s\S]*display:\s*none/);
+  assert.match(css, /body\.finance-embed \.finance-keyboard-composer\s*{[\s\S]*display:\s*block/);
+  assert.match(css, /body\.finance-embed \.finance-keyboard-composer\s*{[\s\S]*scroll-margin-bottom:\s*calc\(var\(--finance-keyboard-bottom,\s*0px\) \+ 18px\)/);
+  assert.match(css, /\.finance-keyboard-composer input\s*{[\s\S]*min-height:\s*42px/);
   assert.match(css, /body\[data-finance-view="entry"\]\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /html\.finance-entry-open\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /html\.finance-input-focus \.finance-bottom-nav,[\s\S]*html\.finance-input-focus body\.finance-embed::after\s*{[\s\S]*display:\s*none/);
@@ -531,12 +537,16 @@ test("report page renders Wacai-like statistics and client auto refresh", () => 
   assert.match(js, /window\.setTimeout\(refreshInputFocusState, 0\)/);
   assert.match(js, /function scheduleTransactionSearch\(value\)/);
   assert.match(js, /function openBillSearch\(\)/);
+  assert.match(js, /function submitKeyboardComposerSearch\(input\)/);
+  assert.match(js, /state\.transactionSearchQuery = value;[\s\S]*setView\("transactions"\);[\s\S]*commitTransactionSearch\(search\)/);
   assert.match(js, /function focusTransactionSearchInput\(\)/);
   assert.match(js, /focusTransactionSearchInput\(\);\s*window\.setTimeout\(focusTransactionSearchInput, 60\);\s*window\.setTimeout\(focusTransactionSearchInput, 180\)/);
   assert.match(js, /function refreshInputFocusState\(\)/);
   assert.match(js, /document\.documentElement\.classList\.toggle\("finance-input-focus", focused \|\| noteFocused\)/);
   assert.match(js, /const noteFocused = Boolean\(active && active\.matches\?\.\("\[data-entry-note-editor\]"\)\) \|\| entryNoteOverlayActive\(\)/);
   assert.match(js, /document\.documentElement\.classList\.toggle\("finance-entry-note-focus", noteFocused\)/);
+  assert.match(js, /keyboardComposerInput\?\.addEventListener\("search", \(event\) => submitKeyboardComposerSearch\(event\.currentTarget\)\)/);
+  assert.match(js, /document\.documentElement\.classList\.toggle\("keyboard-open", viewport\.keyboardShrunk\)/);
   assert.match(js, /function updateKeyboardViewportOffset\(options = \{\}\)/);
   assert.match(js, /viewport: "hermes\.plugin\.viewport"/);
   assert.match(js, /hermesHostViewport:\s*null/);
@@ -560,6 +570,8 @@ test("report page renders Wacai-like statistics and client auto refresh", () => 
   assert.match(js, /function updateFinanceViewportVars\(\)/);
   assert.match(js, /--finance-app-top/);
   assert.match(js, /--finance-app-height/);
+  assert.match(js, /--app-top/);
+  assert.match(js, /--app-height/);
   assert.match(js, /visualOffsetTop/);
   assert.match(js, /finance-keyboard-open/);
   assert.match(js, /viewport\.keyboardShrunk \|\| IS_HERMES_EMBED/);
@@ -795,9 +807,9 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260619a/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260619a/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v144/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260620a/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260620a/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v145/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -817,6 +829,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /focus:\s*{/);
   assert.match(js, /entryNoteFocus:\s*document\.documentElement\.classList\.contains\("finance-entry-note-focus"\)/);
   assert.match(js, /nativeKeyboardVisible:\s*document\.documentElement\.classList\.contains\("finance-native-keyboard-visible"\)/);
+  assert.match(js, /appHeightStyle:\s*getComputedStyle\(document\.documentElement\)\.getPropertyValue\("--app-height"\)/);
   assert.match(js, /appTop:\s*getComputedStyle\(document\.documentElement\)\.getPropertyValue\("--finance-app-top"\)/);
   assert.match(js, /keyboardBottom:\s*getComputedStyle\(document\.documentElement\)\.getPropertyValue\("--finance-keyboard-bottom"\)/);
   assert.match(js, /visualBottom:\s*getComputedStyle\(document\.documentElement\)\.getPropertyValue\("--finance-visual-bottom"\)/);
@@ -833,11 +846,13 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /currentCategory:\s*rect\("\.finance-entry-category-current"\)/);
   assert.match(js, /cameraButton:\s*rect\("\.wacai-camera-button"\)/);
   assert.match(js, /noteButton:\s*rect\("\[data-entry-note-label\]"\)/);
+  assert.match(js, /keyboardComposer:\s*rect\("\[data-finance-keyboard-composer\]"\)/);
+  assert.match(js, /keyboardComposerInput:\s*rect\("\[data-finance-keyboard-composer-input\]"\)/);
   assert.match(js, /\.wacai-entry-meta input, \.wacai-entry-meta select, \.wacai-entry-meta button/);
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v144"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v145"/);
   assert.match(js, /lastKeypadHandledAt:\s*0/);
   assert.match(js, /lastKeypadHandledKey:\s*""/);
   assert.match(js, /lastKeypadHandledType:\s*""/);

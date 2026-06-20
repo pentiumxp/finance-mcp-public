@@ -201,7 +201,7 @@
     return {
       script: script ? parse(script.getAttribute("src")) : "",
       style: style ? parse(style.getAttribute("href")) : "",
-      serviceWorker: "finance-mcp-pwa-v144",
+      serviceWorker: "finance-mcp-pwa-v145",
     };
   }
 
@@ -282,6 +282,7 @@
         appTop: getComputedStyle(document.documentElement).getPropertyValue("--finance-app-top").trim() || "0px",
         appHeight: getComputedStyle(document.documentElement).getPropertyValue("--finance-app-height").trim() || "",
         keyboardBottom: getComputedStyle(document.documentElement).getPropertyValue("--finance-keyboard-bottom").trim() || "0px",
+        appHeightStyle: getComputedStyle(document.documentElement).getPropertyValue("--app-height").trim() || "",
         visualBottom: getComputedStyle(document.documentElement).getPropertyValue("--finance-visual-bottom").trim() || "100dvh",
         noteBottomEdge: getComputedStyle(document.documentElement).getPropertyValue("--finance-note-bottom-edge").trim() || "100dvh",
       },
@@ -293,6 +294,8 @@
         currentCategory: rect(".finance-entry-category-current"),
         categoryGrid: rect(".finance-entry-category-grid"),
         noteButton: rect("[data-entry-note-label]"),
+        keyboardComposer: rect("[data-finance-keyboard-composer]"),
+        keyboardComposerInput: rect("[data-finance-keyboard-composer-input]"),
         noteOverlay: rect(".finance-entry-note-sheet"),
         metaRow: rect(".wacai-entry-meta"),
         cameraButton: rect(".wacai-camera-button"),
@@ -1823,6 +1826,20 @@
     window.setTimeout(focusTransactionSearchInput, 180);
   }
 
+  function submitKeyboardComposerSearch(input) {
+    const value = String(input?.value || "").trim();
+    if (!value) return;
+    state.transactionSearchQuery = value;
+    setView("transactions");
+    const search = $("[data-transaction-search]");
+    if (search) {
+      search.value = value;
+      commitTransactionSearch(search);
+    } else {
+      runTransactionSearch().catch(showError);
+    }
+  }
+
   function focusTransactionSearchInput() {
     const input = $("[data-transaction-search]");
     if (!input) return;
@@ -1895,11 +1912,16 @@
     if (viewport.keyboardShrunk || IS_HERMES_EMBED) {
       document.documentElement.style.setProperty("--finance-app-top", `${Math.max(0, Math.round(viewport.top || 0))}px`);
       document.documentElement.style.setProperty("--finance-app-height", `${viewport.height}px`);
+      document.documentElement.style.setProperty("--app-top", `${Math.max(0, Math.round(viewport.top || 0))}px`);
+      document.documentElement.style.setProperty("--app-height", `${viewport.height}px`);
     } else {
       document.documentElement.style.removeProperty("--finance-app-top");
       document.documentElement.style.removeProperty("--finance-app-height");
+      document.documentElement.style.removeProperty("--app-top");
+      document.documentElement.style.removeProperty("--app-height");
     }
     document.documentElement.classList.toggle("finance-keyboard-open", viewport.keyboardShrunk);
+    document.documentElement.classList.toggle("keyboard-open", viewport.keyboardShrunk);
     return viewport;
   }
 
@@ -4264,6 +4286,13 @@
       if (event.key !== "Enter") return;
       event.preventDefault();
       commitTransactionSearch(event.currentTarget);
+    });
+    const keyboardComposerInput = $("[data-finance-keyboard-composer-input]");
+    keyboardComposerInput?.addEventListener("search", (event) => submitKeyboardComposerSearch(event.currentTarget));
+    keyboardComposerInput?.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      submitKeyboardComposerSearch(event.currentTarget);
     });
     $("[data-open-recurring-create]")?.addEventListener("click", () => openRecurringEditor(recurringFormDefaults()));
     $("[data-generate-recurring-due]")?.addEventListener("click", async () => {

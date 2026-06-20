@@ -209,6 +209,29 @@ The previous full handoff was archived and should be opened only when old proven
 - Deploy validation returned `codexIssueCount: 0`; profile audit retained
   non-Codex issues outside this Finance deploy.
 
+## 2026-06-20 - Embedded Keyboard Composer Visual QA
+
+- Source task: Home AI Visual QA scenario
+  `embedded-plugin-keyboard-composer` for plugin `finance`.
+- Evidence available in task card showed zero-size plugin composer/input
+  metrics and no host keyboard after tap. The referenced report/screenshot under
+  `/Users/hermes-host/HermesMobile/data/visual-polish-runs/20260620-005519489Z/`
+  were not readable by this development user.
+- Fix: Finance embedded ledger home now exposes a real plugin-owned compact
+  search composer with `#composer`, `.composer`, `data-hermes-composer`, and a
+  visible native search input `#messageInput`. Non-empty submission routes into
+  existing bill search only; it does not write ledger data.
+- Fix: Finance mirrors keyboard viewport state to the generic plugin contract
+  expected by the Home AI visual harness: `keyboard-open`, `--app-top`, and
+  `--app-height`, while keeping existing Finance-specific keyboard variables.
+- Static version for this fix: frontend `finance-replica-20260620a`, service
+  worker `finance-mcp-pwa-v145`.
+- Local validation run so far:
+  `node --check public/app-finance-ui.js`,
+  `node --test tests/app-finance-ui.test.js`,
+  Home AI `node tests/ios-pwa-live-debug-server.test.js`, and
+  Home AI `node tests/ios-pwa-visual-harness.test.js`.
+
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
 - Status: committed, pushed to origin/public `main`, and deployed to Mac

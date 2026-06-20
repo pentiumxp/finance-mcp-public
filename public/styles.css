@@ -274,6 +274,35 @@ body.finance-embed .finance-shell {
   padding-bottom: calc(var(--bottom-tabs-bottom) + var(--bottom-tabs-height) + 18px);
 }
 
+.finance-keyboard-composer {
+  display: none;
+}
+
+body.finance-embed .finance-keyboard-composer {
+  display: block;
+  scroll-margin-bottom: calc(var(--finance-keyboard-bottom, 0px) + 18px);
+}
+
+.finance-keyboard-composer input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: 0;
+  font: inherit;
+  font-size: 15px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.finance-keyboard-composer input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
 body.finance-embed::after {
   content: "";
   display: none;
