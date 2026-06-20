@@ -399,6 +399,19 @@ The previous full handoff was archived and should be opened only when old proven
   `npm run check`;
   `git diff --check`.
 - AI Ops evidence: `evidence-2b87ad78-7d3f-477b-b1fd-4c713b11494e` (test).
+- Commit: `674ac79de144` (`fix: search bills by exact numeric amount`).
+- Production deploy:
+  `cd /Users/hermes-dev/HermesMobileDev/app && npm run --silent deploy:macos -- --plugin finance --source /Users/hermes-dev/HermesMobileDev/plugins/finance --reason finance-exact-numeric-bill-search-20260620 --execute --json`.
+  Backup:
+  `/Users/hermes-host/HermesMobile/backups/deploy/20260620T140942Z-plugin-finance-finance-exact-numeric-bill-search-20260620`.
+  Deploy validation returned `codexIssueCount: 0`; profile audit retained
+  non-Codex issues outside this Finance deploy.
+- Production smoke passed: production repository contains
+  `exactAmountSearchCandidates`, production docs state `1200` means `1200.00`,
+  `/api/finance/transactions?search=5000&limit=5` returned HTTP 200 with a
+  bounded transactions array, and plugin manifest remained healthy at
+  `finance-replica-20260620f`.
+- Deploy evidence: `evidence-c033489b-f85a-46bb-aee2-78143160dfaf`.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
