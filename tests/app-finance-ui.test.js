@@ -813,9 +813,11 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260620b/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260620b/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v146/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260620c/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260620c/);
+  assert.doesNotMatch(html, /<h2>最近明细<\/h2>/);
+  assert.doesNotMatch(html, /<header class="finance-section-header">\s*<h2>最近明细<\/h2>\s*<button type="button" data-switch-view="transactions">全部<\/button>/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v147/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -858,7 +860,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v146"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v147"/);
   assert.match(js, /lastKeypadHandledAt:\s*0/);
   assert.match(js, /lastKeypadHandledKey:\s*""/);
   assert.match(js, /lastKeypadHandledType:\s*""/);

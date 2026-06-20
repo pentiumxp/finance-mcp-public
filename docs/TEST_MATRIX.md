@@ -725,6 +725,9 @@ Required coverage:
 
 - Clicking the home search button opens the all-bills page and focuses the bill
   search input by default, with a short delayed retry for PWA/iOS rendering.
+- The ledger home page does not render a separate bill-search row or a
+  `最近明细` / `全部` header above the recent transaction list; all-bills access
+  remains through the existing home service entry and top-right search control.
 - `listTransactions()`, create, idempotent duplicate create, update, and void
   responses return the public joined transaction projection rather than a raw
   `finance_transactions` row.

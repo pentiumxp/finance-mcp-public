@@ -265,8 +265,10 @@ The previous full handoff was archived and should be opened only when old proven
   Home AI keyboard-composer contract now attaches to the existing top-right
   search control, with the harness textarea acting only as the plugin-owned
   focus target and not rendering as a visible search field.
-- Static version for this layout fix: frontend `finance-replica-20260620b`,
-  service worker `finance-mcp-pwa-v146`.
+- Follow-up: removed the home recent-transaction header row as well, so the
+  page no longer shows the `最近明细` title or `全部` prompt above the list.
+- Static version for this layout fix: frontend `finance-replica-20260620c`,
+  service worker `finance-mcp-pwa-v147`.
 
 ## 2026-06-16 Wacai Category Icon Alignment And Live Refresh Retry
 
