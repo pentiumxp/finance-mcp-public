@@ -27,7 +27,8 @@ test("standalone finance UI keeps mobile navigation and settings", () => {
   assert.match(html, /user-scalable=no/);
   assert.match(html, /maximum-scale=1/);
   assert.match(html, /class="finance-bottom-nav"/);
-  assert.match(html, /class="finance-keyboard-composer composer" id="composer" data-hermes-composer data-finance-keyboard-composer/);
+  assert.match(html, /<form class="finance-keyboard-composer composer" id="composer" data-hermes-composer data-finance-keyboard-composer>/);
+  assert.match(html, /data-refresh aria-label="搜索账单"/);
   assert.match(html, /<textarea id="messageInput" rows="1"[\s\S]*data-finance-keyboard-composer-input><\/textarea>/);
   assert.equal((html.match(/data-nav-view=/g) || []).length, 7);
   for (const label of ["账本", "计划", "记账", "报表", "资产", "股票", "我的"]) assert.match(html, new RegExp(`>${label}<`));
@@ -199,10 +200,12 @@ test("finance CSS follows Wacai replica baseline without disallowed patterns", (
   assert.match(css, /html,\s*[\r\n]+body\s*{[\s\S]*overscroll-behavior-x:\s*none/);
   assert.match(css, /body\s*{[\s\S]*touch-action:\s*pan-y/);
   assert.match(css, /body\.finance-booting \.finance-shell,\s*[\r\n]+body\.finance-booting \.finance-bottom-nav\s*{[\s\S]*visibility:\s*hidden/);
-  assert.match(css, /\.finance-keyboard-composer\s*{[\s\S]*display:\s*none/);
-  assert.match(css, /body\.finance-embed \.finance-keyboard-composer\s*{[\s\S]*display:\s*block/);
+  assert.match(css, /\.finance-keyboard-composer\s*{[\s\S]*width:\s*40px/);
+  assert.match(css, /\.finance-keyboard-composer\s*{[\s\S]*height:\s*40px/);
   assert.match(css, /body\.finance-embed \.finance-keyboard-composer\s*{[\s\S]*scroll-margin-bottom:\s*calc\(var\(--finance-keyboard-bottom,\s*0px\) \+ 18px\)/);
-  assert.match(css, /\.finance-keyboard-composer textarea\s*{[\s\S]*min-height:\s*42px/);
+  assert.match(css, /\.finance-keyboard-composer textarea\s*{[\s\S]*min-height:\s*40px/);
+  assert.match(css, /\.finance-keyboard-composer textarea\s*{[\s\S]*opacity:\s*0\.01/);
+  assert.match(css, /\.finance-keyboard-composer textarea\s*{[\s\S]*pointer-events:\s*none/);
   assert.match(css, /body\[data-finance-view="entry"\]\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /html\.finance-entry-open\s*{[\s\S]*overflow:\s*hidden/);
   assert.match(css, /html\.finance-input-focus \.finance-bottom-nav,[\s\S]*html\.finance-input-focus body\.finance-embed::after\s*{[\s\S]*display:\s*none/);
@@ -810,9 +813,9 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   const serviceWorker = fs.readFileSync(path.join(root, "public", "service-worker.js"), "utf8");
   const captureHarness = fs.readFileSync(path.join(root, "scripts", "capture-desktop-pwa.js"), "utf8");
 
-  assert.match(html, /styles\.css\?v=finance-replica-20260620a/);
-  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260620a/);
-  assert.match(serviceWorker, /finance-mcp-pwa-v145/);
+  assert.match(html, /styles\.css\?v=finance-replica-20260620b/);
+  assert.match(html, /app-finance-ui\.js\?v=finance-replica-20260620b/);
+  assert.match(serviceWorker, /finance-mcp-pwa-v146/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/api\/"\)/);
   assert.match(js, /function collectUiProbe/);
   assert.match(js, /function roundRectValue\(value\)/);
@@ -855,7 +858,7 @@ test("finance UI reports real PWA layout probes for Harness validation", () => {
   assert.match(js, /top: roundRectValue\(r\.top\), bottom: roundRectValue\(r\.bottom\), height: roundRectValue\(r\.height\)/);
   assert.match(js, /\.filter\(\(item\) => item\.height > 1\)/);
   assert.match(js, /keypad:\s*rect\("\.wacai-keypad"\)/);
-  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v145"/);
+  assert.match(js, /serviceWorker:\s*"finance-mcp-pwa-v146"/);
   assert.match(js, /lastKeypadHandledAt:\s*0/);
   assert.match(js, /lastKeypadHandledKey:\s*""/);
   assert.match(js, /lastKeypadHandledType:\s*""/);

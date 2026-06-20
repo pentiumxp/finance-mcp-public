@@ -57,7 +57,7 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/finance-icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icons/finance-icon-192.png">
-  <link rel="stylesheet" href="/styles.css?v=finance-replica-20260620a">
+  <link rel="stylesheet" href="/styles.css?v=finance-replica-20260620b">
 </head>
 <body class="finance-booting" data-finance-booting="true">
   <main class="finance-shell">
@@ -69,9 +69,12 @@
         <div class="finance-title" data-ledger-name>日常账本</div>
         <div class="finance-subtitle" data-ledger-status></div>
       </button>
-      <button class="finance-icon-button" type="button" data-refresh aria-label="搜索账单">
-        <span class="finance-glyph finance-glyph-refresh"></span>
-      </button>
+      <form class="finance-keyboard-composer composer" id="composer" data-hermes-composer data-finance-keyboard-composer>
+        <button class="finance-icon-button" type="button" data-refresh aria-label="搜索账单">
+          <span class="finance-glyph finance-glyph-refresh"></span>
+        </button>
+        <textarea id="messageInput" rows="1" inputmode="search" enterkeyhint="search" autocomplete="off" autocorrect="off" aria-label="搜索账单" data-finance-keyboard-composer-input></textarea>
+      </form>
     </header>
 
     <section class="finance-view active" data-view="home">
@@ -108,9 +111,6 @@
           <span>全部</span>
         </button>
       </section>
-      <form class="finance-keyboard-composer composer" id="composer" data-hermes-composer data-finance-keyboard-composer>
-        <textarea id="messageInput" rows="1" inputmode="search" enterkeyhint="search" autocomplete="off" autocorrect="off" aria-label="搜索账单" placeholder="搜索账单" data-finance-keyboard-composer-input></textarea>
-      </form>
       <section class="finance-panel">
         <header class="finance-section-header">
           <h2>最近明细</h2>
@@ -452,6 +452,6 @@
   <div class="finance-overlay hidden" data-entry-note-overlay></div>
   <div class="finance-overlay hidden" data-entry-date-overlay></div>
   <div class="finance-overlay hidden" data-recurring-overlay></div>
-  <script src="/app-finance-ui.js?v=finance-replica-20260620a"></script>
+  <script src="/app-finance-ui.js?v=finance-replica-20260620b"></script>
 </body>
 </html>

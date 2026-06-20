@@ -626,14 +626,17 @@ parallel so one slow quote does not multiply by the number of holdings.
   startup route/draft navigation has completed. This avoids showing an
   intermediate or stale page before the homepage/final route appears; failures
   must also release the boot state before displaying the bounded error.
-- In embedded mode, the ledger home exposes a compact plugin-owned search
-  composer with `#composer`, `.composer`, `data-hermes-composer`, and a native
-  single-line textarea `#messageInput`. It exists so the Home AI
-  `embedded-plugin-keyboard-composer` harness can tap a real Finance-owned
-  input and verify iOS keyboard geometry; submitting a non-empty value routes to
-  the existing bill search rather than writing ledger data. Finance also mirrors
-  its keyboard viewport state to the generic `keyboard-open`, `--app-top`, and
-  `--app-height` plugin contract while retaining the Finance-specific
+- In embedded mode, the top-right bill-search control also owns the compact
+  plugin keyboard composer contract with `#composer`, `.composer`,
+  `data-hermes-composer`, and a native single-line textarea `#messageInput`.
+  It must not render a separate search box in the ledger home content because
+  the visible search affordance is already the top-right icon. The textarea
+  exists so the Home AI `embedded-plugin-keyboard-composer` harness can focus a
+  real Finance-owned input and verify iOS keyboard geometry; submitting a
+  non-empty value routes to the existing bill search rather than writing ledger
+  data. Finance also mirrors its keyboard viewport state to the generic
+  `keyboard-open`, `--app-top`, and `--app-height` plugin contract while
+  retaining the Finance-specific
   `finance-keyboard-open` and `--finance-*` variables. Finance exposes
   `window.handleHermesPluginViewportMessage(data)` so the central Home AI visual
   harness and host shell can deliver the same bounded
